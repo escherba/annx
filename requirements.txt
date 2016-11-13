@@ -1,0 +1,4 @@
+virtualenv
+cython
+regex
+numpy

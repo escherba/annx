@@ -1,0 +1,74 @@
+# OS
+.DS_Store
+
+*.py[cod]
+*.sw[op]
+
+# C extensions and Cython
+*.so
+cythonize.dat
+
+# Packages
+*.egg
+*.egg-info
+dist
+build
+eggs
+parts
+bin
+var
+sdist
+develop-eggs
+.installed.cfg
+lib
+lib64
+__pycache__
+.cache/
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage reports
+.coverage
+.tox
+nosetests.xml
+
+.ropeproject/
+.noseids
+cover/
+coverage.xml
+*~
+
+# Translations
+*.mo
+
+# Mr Developer
+.mr.developer.cfg
+.project
+.pydevproject
+
+# IntelliJ/PyCharm files
+.idea/
+
+# Eclipse
+.settings/
+
+# Virtualenv
+env/
+
+# Domino
+.domino/
+results/
+domino.log
+.noLock
+
+# Misc
+data/
+tmp/
+out/
+
+# ignore Sphinx build dir
+docs/_build/
+
+# debug symbols
+*.dSYM/

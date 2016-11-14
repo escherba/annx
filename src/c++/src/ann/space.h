@@ -48,7 +48,7 @@ class Space {
     virtual void GetNeighbors(const float* point, size_t nb_results,
             vector<SpaceResult<ID>>* results) const = 0;
 
-    virtual void GetNeighbors(ID id, size_t nb_results,
+    virtual void GetNeighbors(const ID& id, size_t nb_results,
             vector<SpaceResult<ID>>* results) const = 0;
 
     // Get the number of elements stored.

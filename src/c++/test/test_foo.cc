@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "annx/space.h"
+#include "ann/space.h"
 
 TEST(ann_test, mean_variance)
 {

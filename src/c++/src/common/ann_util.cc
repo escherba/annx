@@ -3,7 +3,7 @@
 
 #include "common/ann_util.h"
 
-namespace annx{
+namespace ann{
 namespace util {
 void printProgBar(size_t idx, size_t total) {
 

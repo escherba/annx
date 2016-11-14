@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cmath>
 #include <functional>
 #include <map>
@@ -14,32 +16,24 @@
 
 #include "common/ann_util.h"
 #include "common/base64.h"
-#include "annx/space.h"
+#include "ann/space.h"
 
 
-using std::isnan;
+using std::isfinite;
 using std::multimap;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
-using annx::util::printProgBar;
+using ann::util::printProgBar;
+
+namespace /**** begin namespace ****/
+{
 
 template<typename A, typename B>
 std::pair<B,A> flip_pair(const std::pair<A,B> &p)
 {
     return std::pair<B,A>(p.second, p.first);
 }
-
-/*
-template<typename A, typename B>
-std::multimap<B,A> flip_map(const std::map<A,B> &src)
-{
-    std::multimap<B,A> dst;
-    std::transform(src.begin(), src.end(), std::inserter(dst, dst.begin()),
-                   flip_pair<A,B>);
-    return dst;
-}
-*/
 
 template<typename A, typename B, template<class,class,class...> class M, class... Args>
 std::multimap<B,A> flip_map(const M<A,B,Args...> &src)
@@ -51,10 +45,10 @@ std::multimap<B,A> flip_map(const M<A,B,Args...> &src)
     return dst;
 }
 
-inline bool isnan_xf(const float* arr, size_t n) {
+inline bool isfinite_xf(const float* arr, size_t n) {
     const float* end = arr + n;
     for (; arr < end; ++arr) {
-        if (std::isnan(*arr)) {
+        if (std::isfinite(*arr)) {
             return true;
         }
     }
@@ -63,6 +57,8 @@ inline bool isnan_xf(const float* arr, size_t n) {
 
 
 typedef unordered_map<std::string, std::unordered_set<size_t>> Bucket;
+
+} /**** end namespace ****/
 
 template <typename ID>
 class LSHSpace : public Space<ID> {
@@ -87,7 +83,7 @@ class LSHSpace : public Space<ID> {
         void GetNeighbors(const float* point, size_t nb_results,
                 vector<SpaceResult<ID>>* results) const override;
 
-        void GetNeighbors(ID id, size_t nb_results,
+        void GetNeighbors(const ID& id, size_t nb_results,
                 vector<SpaceResult<ID>>* results) const override;
 
         size_t Size() const override;
@@ -223,7 +219,7 @@ unsigned int LSHSpace<ID>::Upsert(const SpaceInput<ID>& input) {
     Delete(input.id);
 
     // Reject NaN entries.
-    if (isnan_xf(input.point, nb_dims_)) {
+    if (isfinite_xf(input.point, nb_dims_)) {
         return 0;
     }
 
@@ -329,7 +325,7 @@ void LSHSpace<ID>::GetNeighbors(const float* point, size_t nb_results,
 }
 
 template <typename ID>
-void LSHSpace<ID>::GetNeighbors(ID id, size_t nb_results,
+void LSHSpace<ID>::GetNeighbors(const ID& id, size_t nb_results,
         vector<SpaceResult<ID>>* results) const
 {
     auto it = id2index_.find(id);

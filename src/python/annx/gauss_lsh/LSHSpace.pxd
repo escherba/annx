@@ -9,7 +9,7 @@ cdef extern from * nogil:
     ctypedef unsigned long int uint32_t
     ctypedef unsigned long long int uint64_t
 
-cdef extern from "annx/space.h" nogil:
+cdef extern from "ann/space.h" nogil:
     cdef cppclass SpaceInput[T]:
         T id
         const float32_t* dist
@@ -25,7 +25,7 @@ cdef extern from "annx/space.h" nogil:
     ctypedef SpaceResult SpaceResult_t
 
 
-cdef extern from "annx/gauss_lsh.h" nogil:
+cdef extern from "ann/gauss_lsh.h" nogil:
     cdef cppclass LSHSpace[T]:
         LSHSpace(size_t L=15, size_t k=32, float32_t w=0.5, uint64_t seed=0)
         void Init(size_t nb_dims)

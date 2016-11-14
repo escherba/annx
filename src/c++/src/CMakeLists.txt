@@ -1,2 +1,2 @@
-add_subdirectory(annx)
+add_subdirectory(ann)
 add_subdirectory(common)

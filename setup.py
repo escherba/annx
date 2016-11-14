@@ -155,7 +155,6 @@ setup(
                 "src/c++/src/common/ann_util.cc",
                 "src/python/annx/ext.pyx",
                 "src/python/annx/ext.pyx",
-                "src/python/annx/gauss_lsh/SpaceResult.pxd",
                 "src/python/annx/gauss_lsh/LSHSpace.pxd",
             ],
             depends=[

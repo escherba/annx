@@ -5,8 +5,6 @@ cimport numpy as np
 cimport cython
 
 from .gauss_lsh cimport LSHSpace
-from .gauss_lsh cimport SpaceInput
-from .gauss_lsh cimport SpaceResult
 
 np.import_array()
 

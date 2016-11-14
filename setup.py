@@ -1,3 +1,4 @@
+import os
 import re
 import numpy
 import itertools
@@ -102,15 +103,20 @@ DEPENDENCY_LINKS = list(set(itertools.chain(
 )))
 
 
+os.environ["CC"] = "gcc-4.9"
+os.environ["CXX"] = "g++-4.9"
+
+
 CXXFLAGS = u"""
+-DNDEBUG
 -O3
+-std=c++11
 -msse4.2
+-fexceptions
 -Wno-unused-value
 -Wno-unused-function
 -Wall
 -Wextra
--Werror
--Wpedantic
 -Wno-unused-parameter
 -Wno-float-equal
 -Wno-old-style-cast
@@ -118,12 +124,6 @@ CXXFLAGS = u"""
 -Wno-padded
 -Wno-unused-function
 -Wno-double-promotion
--fexceptions
--std=c++14
--isystem/usr/include/eigen3
--isystem/usr/local/include/eigen3
--DNDEBUG
-
 """.split()
 
 VERSION = '0.0.1'
@@ -151,9 +151,7 @@ setup(
         Extension(
             "annx.ext",
             [
-                "src/c++/src/annx/space.cc",
                 "src/c++/src/common/ann_util.cc",
-                "src/python/annx/ext.pyx",
                 "src/python/annx/ext.pyx",
                 "src/python/annx/gauss_lsh/LSHSpace.pxd",
             ],
@@ -166,6 +164,8 @@ setup(
             extra_compile_args=CXXFLAGS,
             include_dirs=[
                 numpy.get_include(),
+                "/usr/include/eigen3",
+                "/usr/local/include/eigen3",
                 "src/c++/src",
                 "src/python/annx",
             ])

@@ -152,8 +152,8 @@ setup(
             "annx.ext",
             [
                 "src/c++/src/common/ann_util.cc",
-                "src/python/annx/ext.pyx",
-                "src/python/annx/gauss_lsh/LSHSpace.pxd",
+                "annx/ext.pyx",
+                "annx/gauss_lsh/LSHSpace.pxd",
             ],
             depends=[
                 "src/c++/src/ann/gauss_lsh.h",
@@ -167,7 +167,7 @@ setup(
                 "/usr/include/eigen3",
                 "/usr/local/include/eigen3",
                 "src/c++/src",
-                "src/python/annx",
+                "annx",
             ])
     ],
     classifiers=[

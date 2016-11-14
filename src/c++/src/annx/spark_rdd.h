@@ -15,7 +15,7 @@
 #include <string>
 #include <vector>
 
-#include "ann/space.h"
+#include "annx/space.h"
 
 namespace spark
 {

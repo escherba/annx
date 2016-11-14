@@ -14,7 +14,7 @@
 
 #include "common/ann_util.h"
 #include "common/base64.h"
-#include "ann/space.h"
+#include "annx/space.h"
 
 
 using std::isnan;
@@ -22,7 +22,7 @@ using std::multimap;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
-using ann::util::printProgBar;
+using annx::util::printProgBar;
 
 template<typename A, typename B>
 std::pair<B,A> flip_pair(const std::pair<A,B> &p)

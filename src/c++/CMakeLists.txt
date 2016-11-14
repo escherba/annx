@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.7)
 
-set(PROJECT_NAME_STR ann)
+set(PROJECT_NAME_STR annx)
 project(${PROJECT_NAME_STR} CXX)
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/Modules)

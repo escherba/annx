@@ -1,9 +1,9 @@
 #include <iostream>
 #include <gflags/gflags.h>
 
-#include "ann/gauss_lsh.h"
-#include "ann/spark_rdd.h"
-#include "ann/space.h"
+#include "annx/gauss_lsh.h"
+#include "annx/spark_rdd.h"
+#include "annx/space.h"
 
 
 DEFINE_bool(verbose, false, "Display program name before message");

@@ -6,9 +6,9 @@
 
 #include <boost/filesystem/fstream.hpp>
 
-#include "ann/space.h"
-#include "ann/spark_rdd.h"
-#include "ann/linear_space.h"
+#include "annx/space.h"
+#include "annx/spark_rdd.h"
+#include "annx/linear_space.h"
 
 
 namespace spark {

@@ -9,7 +9,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "ann/space.h"
+#include "annx/space.h"
 
 using std::unordered_map;
 using std::vector;

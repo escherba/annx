@@ -24,9 +24,6 @@ PYENV := . env/bin/activate;
 PYTHON := $(PYENV) python
 PIP := $(PYENV) pip
 
-
-include study-strings/build.mk
-
 doc_sources:
 	sphinx-apidoc \
 		-A "`$(PYTHON) setup.py --author`" \

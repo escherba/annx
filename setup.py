@@ -107,6 +107,23 @@ CXXFLAGS = u"""
 -msse4.2
 -Wno-unused-value
 -Wno-unused-function
+-Wall
+-Wextra
+-Werror
+-Wpedantic
+-Wno-unused-parameter
+-Wno-float-equal
+-Wno-old-style-cast
+-Wno-format-nonliteral
+-Wno-padded
+-Wno-unused-function
+-Wno-double-promotion
+-fexceptions
+-std=c++14
+-isystem/usr/include/eigen3
+-isystem/usr/local/include/eigen3
+-DNDEBUG
+
 """.split()
 
 VERSION = '0.0.1'
@@ -134,32 +151,24 @@ setup(
         Extension(
             "annx.ext",
             [
-                "annx/ext.pyx",
+                "src/c++/src/annx/space.cc",
+                "src/c++/src/common/ann_util.cc",
+                "src/python/annx/ext.pyx",
+                "src/python/annx/ext.pyx",
+                "src/python/annx/gauss_lsh/SpaceResult.pxd",
+                "src/python/annx/gauss_lsh/LSHSpace.pxd",
             ],
             depends=[
+                "src/c++/src/annx/gauss_lsh.h",
+                "src/c++/src/annx/space.h",
+                "src/c++/src/common/ann_util.h",
             ],
             language="c++",
             extra_compile_args=CXXFLAGS,
             include_dirs=[
-                "include",
-            ]),
-        Extension(
-            "annx.entropy",
-            [
-                "annx/entropy.pyx",
-                "annx/gamma.c",
-                "annx/assignmentoptimal_dbl.c",
-                "annx/assignmentoptimal_lng.c"
-            ],
-            depends=[
-                "include/gamma.h",
-                "include/assignmentoptimal.h",
-            ],
-            language="c",
-            extra_compile_args=CXXFLAGS,
-            include_dirs=[
                 numpy.get_include(),
-                "include",
+                "src/c++/src",
+                "src/python/annx",
             ])
     ],
     classifiers=[

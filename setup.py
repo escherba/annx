@@ -153,7 +153,7 @@ setup(
             [
                 "src/c++/src/common/ann_util.cc",
                 "annx/ext.pyx",
-                "annx/gauss_lsh/LSHSpace.pxd",
+                "annx/gauss_lsh.pxd",
             ],
             depends=[
                 "src/c++/src/ann/gauss_lsh.h",

@@ -33,7 +33,7 @@ class LinearSpace : public Space<ID> {
     unsigned int Upsert(const SpaceInput<ID>& input);
 
     void GetNeighbors(const float* point, size_t nb_results,
-                   vector<SpaceResult<ID>>* results) const;
+                   vector<SpaceResult<ID>>& results) const;
 
     size_t Size() const;
 
@@ -248,8 +248,8 @@ void* NeighborsKBestVectorMT(void* arg) {
 
 template <typename ID>
 void LinearSpace<ID>::GetNeighbors(const float* point, size_t nb_results,
-                                vector<SpaceResult<ID>>* results) const {
-    results->clear();
+                                vector<SpaceResult<ID>>& results) const {
+    results.clear();
 
     size_t nb_threads = std::thread::hardware_concurrency();
 
@@ -278,12 +278,12 @@ void LinearSpace<ID>::GetNeighbors(const float* point, size_t nb_results,
 
     for (auto& sub_results : results_per_thread) {
         for (auto& r : sub_results) {
-            results->emplace_back(r);
+            results.emplace_back(r);
         }
     }
-    sort(results->begin(), results->end());
-    if (nb_results < results->size()) {
-        results->resize(nb_results);
+    sort(results.begin(), results.end());
+    if (nb_results < results.size()) {
+        results.resize(nb_results);
     }
 }
 

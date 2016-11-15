@@ -46,10 +46,10 @@ class Space {
 
     // Get the nearest neighbors of a point.
     virtual void GetNeighbors(const float* point, size_t nb_results,
-            vector<SpaceResult<ID>>* results) const = 0;
+            vector<SpaceResult<ID>>& results) const = 0;
 
     virtual void GetNeighbors(const ID& id, size_t nb_results,
-            vector<SpaceResult<ID>>* results) const = 0;
+            vector<SpaceResult<ID>>& results) const = 0;
 
     // Get the number of elements stored.
     virtual size_t Size() const = 0;

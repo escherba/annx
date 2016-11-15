@@ -11,17 +11,13 @@ cdef extern from * nogil:
 cdef extern from "ann/space.h" nogil:
     cdef cppclass SpaceInput[T]:
         T id
-        const float* dist
-
-    ctypedef SpaceInput SpaceInput_t
+        const float* point
 
     cdef cppclass SpaceResult[T]:
         T id
         float dist
         bint operator <  (SpaceResult&, SpaceResult&)
         bint operator == (SpaceResult&, SpaceResult&)
-
-    ctypedef SpaceResult SpaceResult_t
 
 
 cdef extern from "ann/gauss_lsh.h" nogil:
@@ -30,7 +26,9 @@ cdef extern from "ann/gauss_lsh.h" nogil:
         void Init(size_t nb_dims)
         void Clear()
         uint32_t Delete(const T& id)
-        uint32_t Upsert(const SpaceInput_t[T]& input)
-        void GetNeighbors(const T& id, size_t nb_results,
-                          vector[SpaceResult_t[T]]* results)
+        uint32_t Upsert(const SpaceInput[T]& input)
+        void GetNeighborsById "GetNeighbors" (const T& id, size_t nb_results,
+                          vector[SpaceResult[T]]& results)
+        void GetNeighborsByPt "GetNeighbors" (const float* point, size_t nb_results,
+                          vector[SpaceResult[T]]& results)
         size_t Size()

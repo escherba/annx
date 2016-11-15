@@ -81,10 +81,10 @@ class LSHSpace : public Space<ID> {
         unsigned int Upsert(const SpaceInput<ID>& input) override;
 
         void GetNeighbors(const float* point, size_t nb_results,
-                vector<SpaceResult<ID>>* results) const override;
+                vector<SpaceResult<ID>>& results) const override;
 
         void GetNeighbors(const ID& id, size_t nb_results,
-                vector<SpaceResult<ID>>* results) const override;
+                vector<SpaceResult<ID>>& results) const override;
 
         size_t Size() const override;
 
@@ -102,7 +102,7 @@ class LSHSpace : public Space<ID> {
                 std::function<void(size_t, const std::string&)> func) const;
 
         void GetNeighbors(const Eigen::VectorXf &vec, size_t nb_results,
-            vector<SpaceResult<ID>>* results) const;
+            vector<SpaceResult<ID>>& results) const;
 
         // Init memgbers
         size_t nb_dims_;
@@ -260,7 +260,7 @@ unsigned int LSHSpace<ID>::Upsert(const SpaceInput<ID>& input) {
 
 template <typename ID>
 void LSHSpace<ID>::GetNeighbors(const Eigen::VectorXf &evec, size_t nb_results,
-        vector<SpaceResult<ID>>* results) const
+        vector<SpaceResult<ID>>& results) const
 {
     std::unordered_map<size_t, uint32_t> counter;
 
@@ -300,17 +300,17 @@ void LSHSpace<ID>::GetNeighbors(const Eigen::VectorXf &evec, size_t nb_results,
         a.emplace_back(slot);
     }
     std::sort(a.rbegin(), a.rend());
-    auto limit = std::min(a.size(), results->capacity());
+    auto limit = std::min(a.size(), results.capacity());
     auto it = a.begin();
     for (i = 0; i < limit; ++i) {
-        results->emplace_back(*it);
+        results.emplace_back(*it);
         ++it;
     }
 }
 
 template <typename ID>
 void LSHSpace<ID>::GetNeighbors(const float* point, size_t nb_results,
-        vector<SpaceResult<ID>>* results) const
+        vector<SpaceResult<ID>>& results) const
 {
     std::vector<float> vec;
     vec.reserve(nb_dims_);
@@ -326,7 +326,7 @@ void LSHSpace<ID>::GetNeighbors(const float* point, size_t nb_results,
 
 template <typename ID>
 void LSHSpace<ID>::GetNeighbors(const ID& id, size_t nb_results,
-        vector<SpaceResult<ID>>* results) const
+        vector<SpaceResult<ID>>& results) const
 {
     auto it = id2index_.find(id);
     if (it != id2index_.end()) {
@@ -398,7 +398,7 @@ void LSHSpace<ID>::MakeGraph(size_t nb_results, size_t search_k) const {
         printProgBar(i, total);
         vector<SpaceResult<ID>> results;
         results.reserve(nb_results);
-        GetNeighbors(id, search_k, &results);
+        GetNeighbors(id, search_k, results);
         for (auto& result : results) {
             std::cout << id << "," << result.id << "," << result.dist << std::endl;
         }

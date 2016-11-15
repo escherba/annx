@@ -30,6 +30,9 @@ cdef class ANNX(object):
     def clear(self):
         self._indexer.Clear()
 
+    def size(self):
+        return self._indexer.Size()
+
     def upsert(self, uint64_t id, np.ndarray[np.float32_t, ndim=1, mode='c'] arr):
         assert(len(arr) == self._rank)
         cdef SpaceInput[uint64_t] input
@@ -37,13 +40,26 @@ cdef class ANNX(object):
         input.point = <const float*>arr.data
         self._indexer.Upsert(input)
 
-    def neighbors_by_id(self, uint64_t id, uint32_t n):
-        cdef vector[SpaceResult[uint64_t]] vec
-        vec.reserve(n)
-        self._indexer.GetNeighborsById(id, n, vec)
+    cdef _query_result(self, vector[SpaceResult[uint64_t]] vec):
+        ids = np.ndarray(shape=(vec.size(),), dtype=np.uint64)
+        distances = np.ndarray(shape=(vec.size(),), dtype=np.float32)
+        cdef uint32_t i;
+        for i in xrange(vec.size()):
+            ids[i] = vec[i].id
+            distances[i] = vec[i].dist
+        return (ids, distances)
 
-    def neighbors_by_vec(self, np.ndarray[np.float32_t, ndim=1, mode='c'] arr, int n):
-        pass
+    def query_id(self, uint64_t id, uint32_t n_neighbors=10):
+        cdef vector[SpaceResult[uint64_t]] vec
+        vec.reserve(n_neighbors)
+        self._indexer.GetNeighborsById(id, n_neighbors, vec)
+        return self._query_result(vec)
+
+    def query_point(self, np.ndarray[np.float32_t, ndim=1, mode='c'] arr, int n_neighbors=10):
+        cdef vector[SpaceResult[uint64_t]] vec
+        vec.reserve(n_neighbors)
+        self._indexer.GetNeighborsByPt(<const float*>arr.data, n_neighbors, vec)
+        return self._query_result(vec)
 
     def __dealloc__(self):
         del self._indexer

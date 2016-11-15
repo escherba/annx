@@ -33,12 +33,12 @@ cdef class ANNX(object):
     def size(self):
         return self._indexer.Size()
 
-    def upsert(self, uint64_t id, np.ndarray[np.float32_t, ndim=1, mode='c'] arr):
+    def upsert(self, uint64_t id, np.ndarray[np.float32_t, ndim=1, mode='c'] arr not None):
         assert(len(arr) == self._rank)
         cdef SpaceInput[uint64_t] input
         input.id = id
         input.point = <const float*>arr.data
-        self._indexer.Upsert(input)
+        return self._indexer.Upsert(input)
 
     cdef _query_result(self, vector[SpaceResult[uint64_t]] vec):
         ids = np.ndarray(shape=(vec.size(),), dtype=np.uint64)
@@ -55,7 +55,7 @@ cdef class ANNX(object):
         self._indexer.GetNeighborsById(id, n_neighbors, vec)
         return self._query_result(vec)
 
-    def query_point(self, np.ndarray[np.float32_t, ndim=1, mode='c'] arr, int n_neighbors=10):
+    def query_point(self, np.ndarray[np.float32_t, ndim=1, mode='c'] arr not None, uint32_t n_neighbors=10):
         cdef vector[SpaceResult[uint64_t]] vec
         vec.reserve(n_neighbors)
         self._indexer.GetNeighborsByPt(<const float*>arr.data, n_neighbors, vec)

@@ -48,11 +48,11 @@ std::multimap<B,A> flip_map(const M<A,B,Args...> &src)
 inline bool isfinite_xf(const float* arr, size_t n) {
     const float* end = arr + n;
     for (; arr < end; ++arr) {
-        if (std::isfinite(*arr)) {
-            return true;
+        if (!std::isfinite(*arr)) {
+            return false;
         }
     }
-    return false;
+    return true;
 }
 
 
@@ -219,7 +219,7 @@ unsigned int LSHSpace<ID>::Upsert(const SpaceInput<ID>& input) {
     Delete(input.id);
 
     // Reject NaN entries.
-    if (isfinite_xf(input.point, nb_dims_)) {
+    if (!isfinite_xf(input.point, nb_dims_)) {
         return 0;
     }
 

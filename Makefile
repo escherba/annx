@@ -65,13 +65,10 @@ env/make.extras: $(EXTRAS_REQS) | env
 	touch $@
 
 nuke: clean
-	rm -rf *.egg *.egg-info env bin cover coverage.xml nosetests.xml
+	rm -rf env cover coverage.xml nosetests.xml
 
 clean:
 	-python setup.py clean
-	rm -rf dist build
-	rm -f $(EXTENSION_SO) $(EXTENSION_PYF_MOD) $(EXTENSION_PYX_MOD)
-	find . -path ./env -prune -o -type f -name "*.pyc" -exec rm -f {} \;
 
 build_ext: env
 	$(PYTHON) setup.py build_ext --inplace

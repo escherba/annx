@@ -1,12 +1,19 @@
+# cython: boundscheck=False
+# cython: wraparound=False
+# cython: nonecheck=False
+# cython: infer_types=True
+
 __all__ = ["ANNX"]
 
 import numpy as np
 cimport numpy as np
 cimport cython
 
+from libc.stdint cimport uint32_t, uint64_t
+from libcpp.vector cimport vector
+
 cimport gauss_lsh
-from gauss_lsh cimport LSHSpace, SpaceInput, SpaceResult, \
-    uint32_t, uint64_t, vector
+from gauss_lsh cimport LSHSpace, SpaceInput, SpaceResult
 
 np.import_array()
 
@@ -41,9 +48,11 @@ cdef class ANNX(object):
         return self._indexer.Upsert(input)
 
     cdef _query_result(self, vector[SpaceResult[uint64_t]] vec):
-        ids = np.ndarray(shape=(vec.size(),), dtype=np.uint64)
-        distances = np.ndarray(shape=(vec.size(),), dtype=np.float32)
-        cdef uint32_t i;
+        cdef np.ndarray[np.uint64_t, ndim=1] ids = \
+            np.ndarray(shape=(vec.size(),), dtype=np.uint64)
+        cdef np.ndarray[np.float32_t, ndim=1] distances = \
+            np.ndarray(shape=(vec.size(),), dtype=np.float32)
+        cdef size_t i;
         for i in xrange(vec.size()):
             ids[i] = vec[i].id
             distances[i] = vec[i].dist

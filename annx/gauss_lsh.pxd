@@ -1,12 +1,9 @@
 cimport numpy as np
+from libc.stdint cimport uint32_t, uint64_t
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 
 cimport cython
-
-cdef extern from * nogil:
-    ctypedef unsigned long int uint32_t
-    ctypedef unsigned long long int uint64_t
 
 cdef extern from "ann/space.h" nogil:
     cdef cppclass SpaceInput[T]:

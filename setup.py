@@ -163,6 +163,7 @@ CXXFLAGS_UNIX = u"""
 -fexceptions
 -Wall
 -Wextra
+-Wno-deprecated-declarations
 -Wno-double-promotion
 -Wno-float-equal
 -Wno-format-nonliteral

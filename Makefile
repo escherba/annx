@@ -71,7 +71,7 @@ clean:
 	-python setup.py clean
 
 build_ext: env
-	$(PYTHON) setup.py build_ext --inplace
+	$(PYTHON) setup.py build_ext --inplace --with-cython --with-openmp
 	$(PYENV) find $(PYMODULE) -type f -name "setup.py" -exec python {} build_ext --inplace \;
 
 $(EXTENSION_SO): build_ext

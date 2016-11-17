@@ -64,11 +64,11 @@ template <typename ID>
 class LSHSpace : public Space<ID> {
     public:
         LSHSpace(size_t L=15, size_t k=32, float w=0.5, uint64_t seed=0)
-            : prng_(seed)
-            , seed_(seed)
-            , L_(L)
+            : L_(L)
             , k_(k)
             , w_(w)
+            , seed_(seed)
+            , prng_(seed)
         {};
         ~LSHSpace();
 
@@ -121,14 +121,15 @@ class LSHSpace : public Space<ID> {
         vector<Eigen::VectorXf> offsets_;
         vector<Bucket> buckets_;
 
-        // members initialized in the initialization list
-        boost::mt19937_64 prng_;
-
         // constructor params
         size_t L_;
         size_t k_;
         float w_;
         uint64_t seed_;
+
+        // members initialized in the initialization list
+        boost::mt19937_64 prng_;
+
 };
 
 template <typename ID>

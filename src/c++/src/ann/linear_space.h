@@ -94,7 +94,7 @@ unsigned int LinearSpace<ID>::Delete(const ID& id) {
         point_floats_[to_index] = point_floats_[from_index];
     }
     point_floats_.resize(ids_.size() * nb_dims_);
-	return 1;
+    return 1;
 }
 
 template <typename ID>
@@ -112,7 +112,7 @@ unsigned int LinearSpace<ID>::Upsert(const SpaceInput<ID>& input) {
         point_floats_.emplace_back(input.point[i]);
     }
 
-	return 1;
+    return 1;
 }
 
 /*

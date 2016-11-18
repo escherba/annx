@@ -18,7 +18,7 @@ void RandomFill(_ForwardIterator first, _ForwardIterator last) {
 }
 
 
-TEST(ann_test, mean_variance)
+TEST(ann_test, basic)
 {
     LSHSpace<ID> indexer;
     indexer.Init(10);

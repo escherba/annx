@@ -23,9 +23,9 @@ cdef class ANNX:
     cdef LSHSpace[uint64_t]* _indexer
     cdef uint32_t _rank
 
-    def __cinit__(self, uint32_t rank, L=15, k=32, w=0.5, normalize_inputs=False):
-        self._indexer = new LSHSpace[uint64_t](L, k, rank, 0)
-        self._indexer.Init(rank)
+    def __cinit__(self, uint32_t rank, L=15, k=32, w=0.5, search_k=0, seed=0):
+        self._indexer = new LSHSpace[uint64_t](seed)
+        self._indexer.Config(rank, L, k, w, search_k)
         self._rank = rank
 
     def remove(self, uint64_t id):
@@ -58,14 +58,12 @@ cdef class ANNX:
 
     def query_id(self, uint64_t id, uint32_t n_neighbors=10):
         cdef vector[SpaceResult[uint64_t]] results
-        results.reserve(n_neighbors)
         self._indexer.GetNeighborsById(id, n_neighbors, results)
         return self._query_result(results)
 
     def query_point(self, np.ndarray[np.float32_t, ndim=1, mode='c'] vec not None,
                     uint32_t n_neighbors=10):
         cdef vector[SpaceResult[uint64_t]] results
-        results.reserve(n_neighbors)
         self._indexer.GetNeighborsByPt(<const float*>vec.data, n_neighbors, results)
         return self._query_result(results)
 

@@ -35,12 +35,11 @@ int main(int argc, char *argv[])
     // hasher.Init(0.5);
 
     //Space<AnyID>* embedding_space_{nullptr};
-    LSHSpace<uint32_t> embedding_space_(
-            FLAGS_L, FLAGS_k, FLAGS_w, FLAGS_seed);
+    LSHSpace<uint32_t> embedding_space_;
     embedding_space_.Init(128);
 
     spark::LoadFiles(FLAGS_input.c_str(), &embedding_space_);
-    embedding_space_.MakeGraph(FLAGS_n_neighbors, FLAGS_search_k);
+    embedding_space_.MakeGraph(FLAGS_n_neighbors);
 
     return 0;
 }

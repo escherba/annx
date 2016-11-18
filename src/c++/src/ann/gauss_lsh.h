@@ -63,16 +63,14 @@ typedef unordered_map<std::string, std::unordered_set<size_t>> Bucket;
 template <typename ID>
 class LSHSpace : public Space<ID> {
     public:
-        LSHSpace(size_t L=15, size_t k=32, float w=0.5, uint64_t seed=0)
-            : L_(L)
-            , k_(k)
-            , w_(w)
-            , seed_(seed)
-            , prng_(seed)
+        LSHSpace(uint64_t seed=0)
+            : prng_(seed)
         {};
         ~LSHSpace();
 
         void Init(size_t nb_dims) override;
+
+        void Config(size_t nb_dims, size_t L=15, size_t k=32, float w=0.5, size_t search_k=0);
 
         void Clear() override;
 
@@ -90,7 +88,7 @@ class LSHSpace : public Space<ID> {
 
         void Info(FILE* log, size_t indent=2, size_t indent_incr=4) const override;
 
-        void MakeGraph(size_t nb_results, size_t search_k=0) const;
+        void MakeGraph(size_t nb_results) const;
 
     private:
 
@@ -104,7 +102,6 @@ class LSHSpace : public Space<ID> {
         void GetNeighbors(const Eigen::VectorXf &vec, size_t nb_results,
             vector<SpaceResult<ID>>& results) const;
 
-        // Init memgbers
         size_t nb_dims_;
 
         // dynamically allocated members
@@ -125,7 +122,7 @@ class LSHSpace : public Space<ID> {
         size_t L_;
         size_t k_;
         float w_;
-        uint64_t seed_;
+        size_t search_k_;
 
         // members initialized in the initialization list
         boost::mt19937_64 prng_;
@@ -136,12 +133,24 @@ template <typename ID>
 LSHSpace<ID>::~LSHSpace() {}
 
 template <typename ID>
-void LSHSpace<ID>::Init(size_t nb_dims) {
+void LSHSpace<ID>::Config(size_t nb_dims, size_t L, size_t k, float w, size_t search_k)
+{
     // create placeholders for random vectors
+    nb_dims_ = nb_dims;
+    L_ = L;
+    k_ = k;
+    w_ = w;
+    search_k_ = search_k;
+
     nb_dims_ = nb_dims;
     _InitTables();
     _InitOffsets();
     _InitBuckets();
+}
+
+template <typename ID>
+void LSHSpace<ID>::Init(size_t nb_dims) {
+    Config(nb_dims);
 }
 
 template <typename ID>
@@ -276,10 +285,12 @@ void LSHSpace<ID>::GetNeighbors(const Eigen::VectorXf &evec, size_t nb_results,
         }
     });
 
-    // this sorts the counter by value
+    // first sort by the number of matching buckets
+    // (this is done using flip_map)
     std::multimap<uint32_t, size_t> dst = flip_map(counter);
     size_t i;
-    size_t num_candidates = std::min(nb_results, dst.size());
+    size_t search_k = (search_k_ == 0) ? L_ * nb_results : search_k_;
+    size_t num_candidates = std::min(search_k, dst.size());
     std::vector<ID> cand_ids;
     cand_ids.reserve(num_candidates);
     Eigen::MatrixXf cand_data(num_candidates, nb_dims_);
@@ -291,18 +302,20 @@ void LSHSpace<ID>::GetNeighbors(const Eigen::VectorXf &evec, size_t nb_results,
         cand_data.row(i) = points_[idx].transpose();
         ++cit;
     }
+    // next sort by distances in ascending order
     auto distances = cand_data * evec;
-    std::vector<SpaceResult<ID>> a;
-    a.reserve(num_candidates);
+    std::vector<SpaceResult<ID>> candidates;
+    candidates.reserve(num_candidates);
     for (i = 0; i < num_candidates; ++i) {
         SpaceResult<ID> slot;
         slot.id = cand_ids[i];
         slot.dist = distances[i];
-        a.emplace_back(slot);
+        candidates.emplace_back(slot);
     }
-    std::sort(a.rbegin(), a.rend());
-    auto limit = std::min(a.size(), results.capacity());
-    auto it = a.begin();
+    std::sort(candidates.rbegin(), candidates.rend());
+    results.reserve(nb_results);
+    auto limit = std::min(candidates.size(), results.capacity());
+    auto it = candidates.begin();
     for (i = 0; i < limit; ++i) {
         results.emplace_back(*it);
         ++it;
@@ -359,6 +372,7 @@ void LSHSpace<ID>::_InitTables() {
 
 template <typename ID>
 void LSHSpace<ID>::_InitBuckets() {
+    buckets_.clear();
     buckets_.reserve(L_);
     for (size_t i = 0; i < L_; ++i) {
         Bucket bucket;
@@ -388,18 +402,14 @@ size_t LSHSpace<ID>::Size() const {
 }
 
 template <typename ID>
-void LSHSpace<ID>::MakeGraph(size_t nb_results, size_t search_k) const {
+void LSHSpace<ID>::MakeGraph(size_t nb_results) const {
     // Iterate over all ids stored
-    if (search_k == 0) {
-        search_k = L_ * nb_results;
-    }
     size_t total = ids_.size();
     size_t i = 0;
     for (auto& id : ids_) {
         printProgBar(i, total);
         vector<SpaceResult<ID>> results;
-        results.reserve(nb_results);
-        GetNeighbors(id, search_k, results);
+        GetNeighbors(id, nb_results, results);
         for (auto& result : results) {
             std::cout << id << "," << result.id << "," << result.dist << std::endl;
         }

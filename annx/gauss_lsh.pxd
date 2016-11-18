@@ -19,7 +19,8 @@ cdef extern from "ann/space.h" nogil:
 
 cdef extern from "ann/gauss_lsh.h" nogil:
     cdef cppclass LSHSpace[T]:
-        LSHSpace(size_t L, size_t k, float w, uint64_t seed)
+        LSHSpace(uint64_t seed)
+        void Config(size_t nb_dims, size_t L, size_t k, float w, size_t search_k)
         void Init(size_t nb_dims)
         void Clear()
         uint32_t Delete(const T& id)

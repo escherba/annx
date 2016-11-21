@@ -295,27 +295,19 @@ void LSHSpace<ID>::GetNeighbors(const Eigen::VectorXf &evec, size_t nb_results,
     size_t i;
     size_t search_k = (search_k_ == 0) ? L_ * nb_results : search_k_;
     size_t num_candidates = std::min(search_k, dst.size());
-    std::vector<ID> cand_ids;
-    cand_ids.reserve(num_candidates);
-    Eigen::MatrixXf cand_data(num_candidates, nb_dims_);
     auto cit = dst.rbegin();
-    for (i = 0; i < num_candidates; ++i) {
-        auto idx = cit->second;
-        auto& id = ids_[idx];
-        cand_ids.emplace_back(id);
-        cand_data.row(i) = points_[idx].transpose();
-        ++cit;
-    }
-    // next sort by distances in ascending order
-    auto distances = cand_data * evec;
     std::vector<SpaceResult<ID>> candidates;
     candidates.reserve(num_candidates);
     for (i = 0; i < num_candidates; ++i) {
+        auto idx = cit->second;
+        auto& id = ids_[idx];
         SpaceResult<ID> slot;
-        slot.id = cand_ids[i];
-        slot.dist = distances[i];
+        slot.id = id;
+        slot.dist = evec.dot(points_[idx]);  // calculate distance
         candidates.emplace_back(slot);
+        ++cit;
     }
+    // next sort by distances in ascending order
     std::sort(candidates.rbegin(), candidates.rend());
     results.reserve(nb_results);
     auto limit = std::min(candidates.size(), results.capacity());

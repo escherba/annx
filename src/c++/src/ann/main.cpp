@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <gflags/gflags.h>
+#include <Eigen/Core>
 
 #include "ann/gauss_lsh.h"
 #include "ann/spark_rdd.h"
@@ -31,6 +32,8 @@ int main(int argc, char *argv[])
     gflags::ParseCommandLineFlags(&argc, &argv, true);
     if (FLAGS_verbose) std::cout << gflags::ProgramInvocationShortName() << ": ";
     gflags::ShutDownCommandLineFlags();
+
+    Eigen::initParallel();
 
     LSHSpace<uint32_t> embedding_space_;
     embedding_space_.Init(128);

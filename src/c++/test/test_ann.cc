@@ -9,8 +9,7 @@ typedef uint32_t ID;
 
 template<typename _ForwardIterator>
 void RandomFill(_ForwardIterator first, _ForwardIterator last) {
-    uint64_t seed = 0;
-    boost::mt19937_64 prng_(seed);
+    boost::mt19937_64 prng_;
     boost::normal_distribution<float> gauss(0.0, 1.0);
     boost::variate_generator<boost::mt19937_64&,
         boost::normal_distribution<float>> rand_var(prng_, gauss);

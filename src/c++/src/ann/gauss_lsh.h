@@ -88,7 +88,7 @@ class LSHSpace : public Space<ID> {
 
         void Info(FILE* log, size_t indent=2, size_t indent_incr=4) const override;
 
-        void MakeGraph(size_t nb_results) const;
+        void MakeGraph(std::ostream& out, size_t nb_results) const;
 
     private:
 
@@ -402,7 +402,7 @@ size_t LSHSpace<ID>::Size() const {
 }
 
 template <typename ID>
-void LSHSpace<ID>::MakeGraph(size_t nb_results) const {
+void LSHSpace<ID>::MakeGraph(std::ostream& out, size_t nb_results) const {
     // Iterate over all ids stored
     size_t total = ids_.size();
     size_t i = 0;
@@ -411,7 +411,7 @@ void LSHSpace<ID>::MakeGraph(size_t nb_results) const {
         vector<SpaceResult<ID>> results;
         GetNeighbors(id, nb_results, results);
         for (auto& result : results) {
-            std::cout << id << "," << result.id << "," << result.dist << std::endl;
+            out << id << "," << result.id << "," << result.dist << std::endl;
         }
         i++;
     }

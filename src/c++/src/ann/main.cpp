@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
     embedding_space_.Init(128);
 
     spark::LoadFiles(FLAGS_input.c_str(), &embedding_space_);
-    embedding_space_.MakeGraph(FLAGS_n_neighbors);
+    embedding_space_.MakeGraph(std::cout, FLAGS_n_neighbors);
 
     return 0;
 }

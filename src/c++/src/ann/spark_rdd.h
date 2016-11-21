@@ -78,5 +78,5 @@ bool parse_WrappedArray(Iterator first, Iterator last, unsigned int& rid, std::v
 
 bool parse_SparkLine(const std::string& line, unsigned int& rid, std::vector<float>& v);
 void LoadFile(const fs::path& filepath, Space<AnyID>* space);
-void LoadFiles(const char* path, Space<AnyID>* space);
+void LoadFiles(const std::string& path, Space<AnyID>* space);
 }

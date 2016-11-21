@@ -28,9 +28,8 @@ namespace spark {
         return false;
     }
 
-    void LoadFile(const fs::path& filepath, Space<AnyID>* space) {
-        std::cerr << "Processing " << filepath.filename() << "... ";
-        fs::ifstream infile(filepath);
+    void LoadFile(std::istream& infile, Space<AnyID>* space)
+    {
         std::string line;
         size_t num_parsed = 0;
         size_t num_loaded = 0;
@@ -47,27 +46,34 @@ namespace spark {
                 num_parsed++;
             } else {
                 // report that the match didn't succeed
-                std::cerr << "Failed at line " << line_id << std::endl;
+                std::cerr << "Failed at line " << line_id << ": " << line << std::endl;
                 break;
             }
         }
         std::cerr << "(" << num_parsed << " lines parsed, "
             << num_parsed - num_loaded << " skipped)" << std::endl;
     }
-    void LoadFiles(const char* path, Space<AnyID>* space) {
-        if (fs::is_directory(path)) {
+
+    void LoadFiles(const std::string& path, Space<AnyID>* space)
+    {
+        if (path == "-") {
+            std::cerr << "Reading from stdin..." << std::endl;
+            spark::LoadFile(std::cin, space);
+        } else if (fs::is_directory(path)) {
             for (fs::directory_iterator itr(path); itr != fs::directory_iterator(); ++itr) {
                 const fs::path filepath = itr->path();
                 if (fs::is_regular_file(filepath)) {
-                    spark::LoadFile(filepath, space);
+                    std::cerr << "Processing " << filepath.filename() << "... ";
+                    std::ifstream infile(filepath.c_str());
+                    spark::LoadFile(infile, space);
                 }
             }
         } else if (fs::is_regular_file(path)) {
             const fs::path filepath(path);
-            spark::LoadFile(filepath, space);
+            std::ifstream infile(filepath.c_str());
+            spark::LoadFile(infile, space);
         } else {
             std::cerr << path << ": No such file or directory" << std::endl;
         }
     }
-
 }

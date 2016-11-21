@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <gflags/gflags.h>
 
 #include "ann/gauss_lsh.h"
@@ -9,6 +10,7 @@
 DEFINE_bool(verbose, false, "Display program name before message");
 DEFINE_string(algo, "linear", "Which algo to use");
 DEFINE_string(input, "-", "input file or directory");
+DEFINE_string(output, "-", "output file");
 DEFINE_uint64(rank, 128, "Embedding rank");
 DEFINE_uint64(seed, 0, "Random seed");
 DEFINE_double(w, 0.5, "w-value");
@@ -31,9 +33,8 @@ int main(int argc, char *argv[])
 
     LSHSpace<uint32_t> embedding_space_;
     embedding_space_.Init(128);
-
-    spark::LoadFiles(FLAGS_input.c_str(), &embedding_space_);
-    embedding_space_.MakeGraph(stdout, FLAGS_n_neighbors);
+    spark::LoadFiles(FLAGS_input, &embedding_space_);
+    embedding_space_.MakeGraph(FLAGS_output, FLAGS_n_neighbors);
 
     return 0;
 }

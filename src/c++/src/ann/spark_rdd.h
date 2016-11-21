@@ -6,7 +6,6 @@
 //
 
 #include <boost/config/warning_disable.hpp>
-#include <boost/filesystem.hpp>
 
 #include <boost/spirit/include/qi.hpp>
 #include <boost/spirit/include/phoenix_core.hpp>
@@ -24,8 +23,6 @@ namespace spark
 namespace qi = boost::spirit::qi;
 namespace ascii = boost::spirit::ascii;
 namespace phoenix = boost::phoenix;
-namespace fs = boost::filesystem;
-//namespace fs = std::filesystem;
 
 using qi::float_;
 using qi::long_;
@@ -77,6 +74,6 @@ bool parse_WrappedArray(Iterator first, Iterator last, unsigned int& rid, std::v
 }
 
 bool parse_SparkLine(const std::string& line, unsigned int& rid, std::vector<float>& v);
-void LoadFile(const fs::path& filepath, Space<AnyID>* space);
+void LoadFile(const std::istream& infile, Space<AnyID>* space);
 void LoadFiles(const std::string& path, Space<AnyID>* space);
 }

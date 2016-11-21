@@ -1,3 +1,4 @@
+#include <ctime>
 #include <iostream>
 #include <fstream>
 #include <gflags/gflags.h>
@@ -33,8 +34,17 @@ int main(int argc, char *argv[])
 
     LSHSpace<uint32_t> embedding_space_;
     embedding_space_.Init(128);
+
+    auto t0 = std::clock();
     spark::LoadFiles(FLAGS_input, &embedding_space_);
+    auto t1 = std::clock();
+    double d1 = (t1 - t0) / (double) CLOCKS_PER_SEC;
+    std::cerr << "time to load files: " << d1 << " sec" << std::endl;
+
     embedding_space_.MakeGraph(FLAGS_output, FLAGS_n_neighbors);
+    auto t2 = std::clock();
+    double d2 = (t2 - t1) / (double) CLOCKS_PER_SEC;
+    std::cerr << "time to create graph: " << d2 << " sec" << std::endl;
 
     return 0;
 }

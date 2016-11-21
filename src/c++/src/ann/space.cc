@@ -4,7 +4,7 @@
 #include <fstream>
 #include <string>
 
-#include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem.hpp>
 
 #include "ann/space.h"
 #include "ann/spark_rdd.h"

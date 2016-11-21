@@ -1,5 +1,6 @@
 cimport numpy as np
 from libc.stdint cimport uint32_t, uint64_t
+from libc.stdio cimport FILE
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 
@@ -29,4 +30,5 @@ cdef extern from "ann/gauss_lsh.h" nogil:
                           vector[SpaceResult[T]]& results)
         void GetNeighborsByPt "GetNeighbors" (const float* point, size_t nb_results,
                           vector[SpaceResult[T]]& results)
+        void MakeGraph(FILE* out, size_t nb_results)
         size_t Size()

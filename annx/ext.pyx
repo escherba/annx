@@ -10,12 +10,17 @@ cimport numpy as np
 cimport cython
 
 from libc.stdint cimport uint32_t, uint64_t
+from libc.stdio cimport FILE, fdopen
 from libcpp.vector cimport vector
 
 cimport gauss_lsh
 from gauss_lsh cimport LSHSpace, SpaceInput, SpaceResult
 
 np.import_array()
+
+
+cdef extern from "fileobject.h":
+    cdef FILE *PyFile_AsFile(object) except NULL
 
 
 cdef class ANNX:
@@ -66,6 +71,11 @@ cdef class ANNX:
         cdef vector[SpaceResult[uint64_t]] results
         self._indexer.GetNeighborsByPt(<const float*>vec.data, n_neighbors, results)
         return self._query_result(results)
+
+    def make_graph(self, fhandle, uint32_t nb_neighbors=10):
+        cdef FILE *cfile
+        cfile = PyFile_AsFile(fhandle)
+        self._indexer.MakeGraph(cfile, nb_neighbors)
 
     def __dealloc__(self):
         del self._indexer

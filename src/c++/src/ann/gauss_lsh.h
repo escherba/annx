@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <cstdio>
 #include <functional>
 #include <map>
 #include <string>
@@ -88,7 +89,7 @@ class LSHSpace : public Space<ID> {
 
         void Info(FILE* log, size_t indent=2, size_t indent_incr=4) const override;
 
-        void MakeGraph(std::ostream& out, size_t nb_results) const;
+        void MakeGraph(FILE* out, size_t nb_results) const;
 
     private:
 
@@ -402,7 +403,7 @@ size_t LSHSpace<ID>::Size() const {
 }
 
 template <typename ID>
-void LSHSpace<ID>::MakeGraph(std::ostream& out, size_t nb_results) const {
+void LSHSpace<ID>::MakeGraph(FILE* out, size_t nb_results) const {
     // Iterate over all ids stored
     size_t total = ids_.size();
     size_t i = 0;
@@ -411,7 +412,10 @@ void LSHSpace<ID>::MakeGraph(std::ostream& out, size_t nb_results) const {
         vector<SpaceResult<ID>> results;
         GetNeighbors(id, nb_results, results);
         for (auto& result : results) {
-            out << id << "," << result.id << "," << result.dist << std::endl;
+            std::stringstream ss;
+            ss << id << "," << result.id << "," << result.dist;
+            const std::string s = ss.str();
+            fprintf(out, "%s\n", s.c_str());
         }
         i++;
     }

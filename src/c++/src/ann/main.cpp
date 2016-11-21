@@ -29,17 +29,11 @@ int main(int argc, char *argv[])
     if (FLAGS_verbose) std::cout << gflags::ProgramInvocationShortName() << ": ";
     gflags::ShutDownCommandLineFlags();
 
-    // // Test LSH
-    // auto hasher = LSH<float>(15, 32, 128);
-    // hasher.SetSeed(FLAGS_seed);
-    // hasher.Init(0.5);
-
-    //Space<AnyID>* embedding_space_{nullptr};
     LSHSpace<uint32_t> embedding_space_;
     embedding_space_.Init(128);
 
     spark::LoadFiles(FLAGS_input.c_str(), &embedding_space_);
-    embedding_space_.MakeGraph(std::cout, FLAGS_n_neighbors);
+    embedding_space_.MakeGraph(stdout, FLAGS_n_neighbors);
 
     return 0;
 }

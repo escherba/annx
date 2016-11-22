@@ -296,25 +296,16 @@ void LSHSpace<ID>::GetNeighbors(const Eigen::VectorXf &evec, size_t nb_results,
     size_t search_k = (search_k_ == 0) ? L_ * nb_results : search_k_;
     size_t num_candidates = std::min(search_k, dst.size());
     auto cit = dst.rbegin();
-    std::vector<ID> sids;
-    std::vector<const Eigen::VectorXf*> spoints;
-    sids.reserve(num_candidates);
-    spoints.reserve(num_candidates);
+    std::vector<SpaceResult<ID>> candidates;
+    candidates.reserve(num_candidates);
     for (i = 0; i < num_candidates; ++i) {
         auto idx = cit->second;
-        spoints.emplace_back(&points_[idx]);
-        sids.emplace_back(ids_[idx]);
-        ++cit;
-    }
-    std::vector<SpaceResult<ID>> candidates(num_candidates);
-    //#pragma omp parallel
-    for (i = 0; i < num_candidates; ++i) {
-        auto id = sids[i];
-        auto point = spoints[i];
+        auto& id = ids_[idx];
         SpaceResult<ID> slot;
         slot.id = id;
-        slot.dist = evec.dot(*point);  // calculate distance
-        candidates[i] = slot;
+        slot.dist = evec.dot(points_[idx]);  // calculate distance
+        candidates.emplace_back(slot);
+        ++cit;
     }
     // next sort by distances in ascending order
     std::sort(candidates.rbegin(), candidates.rend());

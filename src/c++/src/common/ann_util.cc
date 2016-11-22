@@ -7,7 +7,9 @@
 namespace ann {
 namespace util {
 
-ProgBar::ProgBar(size_t total): pv_(1), total_(total), percent_(0) {
+ProgBar::ProgBar(size_t total)
+    : pv_(1), total_(total), percent_(0)
+{
     std::system("setterm -cursor off");
 }
 

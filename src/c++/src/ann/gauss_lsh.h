@@ -9,6 +9,8 @@
 #include <unordered_set>
 #include <unordered_map>
 
+#include <omp.h>
+
 #include <boost/bind.hpp>
 #include <boost/nondet_random.hpp>
 #include <boost/random.hpp>
@@ -296,16 +298,25 @@ void LSHSpace<ID>::GetNeighbors(const Eigen::VectorXf &evec, size_t nb_results,
     size_t search_k = (search_k_ == 0) ? L_ * nb_results : search_k_;
     size_t num_candidates = std::min(search_k, dst.size());
     auto cit = dst.rbegin();
-    std::vector<SpaceResult<ID>> candidates;
-    candidates.reserve(num_candidates);
+    std::vector<ID> sids;
+    std::vector<const Eigen::VectorXf*> spoints;
+    sids.reserve(num_candidates);
+    spoints.reserve(num_candidates);
     for (i = 0; i < num_candidates; ++i) {
         auto idx = cit->second;
-        auto& id = ids_[idx];
+        spoints.emplace_back(&points_[idx]);
+        sids.emplace_back(ids_[idx]);
+        ++cit;
+    }
+    std::vector<SpaceResult<ID>> candidates(num_candidates);
+    //#pragma omp parallel
+    for (i = 0; i < num_candidates; ++i) {
+        auto id = sids[i];
+        auto point = spoints[i];
         SpaceResult<ID> slot;
         slot.id = id;
-        slot.dist = evec.dot(points_[idx]);  // calculate distance
-        candidates.emplace_back(slot);
-        ++cit;
+        slot.dist = evec.dot(*point);  // calculate distance
+        candidates[i] = slot;
     }
     // next sort by distances in ascending order
     std::sort(candidates.rbegin(), candidates.rend());
@@ -398,20 +409,33 @@ size_t LSHSpace<ID>::Size() const {
 }
 
 template <typename ID>
+inline void WriteResults(std::ostream& out, ID& id, vector<SpaceResult<ID>>& results) {
+    for (auto& result: results) {
+        out << id << "," << result.id << "," << result.dist << std::endl;
+    }
+}
+
+template <typename ID>
 void LSHSpace<ID>::MakeGraph(std::ostream& out, size_t nb_results) const {
     // Iterate over all ids stored
     size_t total = ids_.size();
-    size_t i = 1;
-    for (auto& id : ids_) {
-        printProgBar(i, total);
+    size_t pv = 1;
+    size_t i;
+    system("setterm -cursor off");
+    #pragma omp parallel for reduction(+:pv)
+    for (i = 0; i < ids_.size(); ++i) {
+        auto id = ids_[i];
         vector<SpaceResult<ID>> results;
         GetNeighbors(id, nb_results, results);
-        for (auto& result : results) {
-            out << id << "," << result.id << "," << result.dist << std::endl;
+        #pragma omp critical
+        {
+        printProgBar(pv, total / omp_get_num_threads());
+        WriteResults(out, id, results);
         }
-        i++;
+        pv++;
     }
     std::cerr << std::endl;
+    system("setterm -cursor on");
 }
 
 template <typename ID>
@@ -420,7 +444,7 @@ void LSHSpace<ID>::MakeGraph(const std::string& path, size_t nb_results) const {
         MakeGraph(std::cout, nb_results);
     } else {
         std::ofstream ofs;
-        ofs.open(path, std::ofstream::out | std::ofstream::app);
+        ofs.open(path, std::ofstream::out | std::ofstream::trunc);
         MakeGraph(ofs, nb_results);
         ofs.close();
     }

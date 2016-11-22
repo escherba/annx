@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <iostream>
 #include <string>
 
@@ -7,12 +8,12 @@ namespace ann {
 namespace util {
 
 ProgBar::ProgBar(size_t total): pv_(1), total_(total), percent_(0) {
-    system("setterm -cursor off");
+    std::system("setterm -cursor off");
 }
 
 ProgBar::~ProgBar() {
     std::cerr << std::endl;
-    system("setterm -cursor on");
+    std::system("setterm -cursor on");
 }
 
 void ProgBar::update(size_t count) {

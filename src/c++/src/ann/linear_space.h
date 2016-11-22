@@ -2,21 +2,23 @@
 
 #include <algorithm>
 #include <cmath>
+#include <iostream>
 #include <pthread.h>
 #include <set>
-#include <thread>
 #include <string>
+#include <thread>
 #include <unordered_map>
 #include <vector>
 
+#include "common/ann_util.h"
 #include "ann/space.h"
 
 using std::unordered_map;
 using std::vector;
-
 using std::isnan;
 using std::set;
 
+using ann::util::ProgBar;
 
 template <typename ID>
 class LinearSpace : public Space<ID> {
@@ -24,20 +26,27 @@ class LinearSpace : public Space<ID> {
     LinearSpace();
     ~LinearSpace();
 
-    void Init(size_t nb_dims);
+    void Init(size_t nb_dims) override;
 
-    void Clear();
+    void Clear() override;
 
-    unsigned int Delete(const ID& id);
+    unsigned int Delete(const ID& id) override;
 
-    unsigned int Upsert(const SpaceInput<ID>& input);
+    unsigned int Upsert(const SpaceInput<ID>& input) override;
 
     void GetNeighbors(const float* point, size_t nb_results,
-                   vector<SpaceResult<ID>>& results) const;
+                   vector<SpaceResult<ID>>& results) const override;
 
-    size_t Size() const;
+    void GetNeighbors(const ID& id, size_t nb_results,
+            vector<SpaceResult<ID>>& results) const override;
 
-    void Info(FILE* log, size_t indent=2, size_t indent_incr=4) const;
+    size_t Size() const override;
+
+    void Info(FILE* log, size_t indent=2, size_t indent_incr=4) const override;
+
+    void MakeGraph(std::ostream& out, size_t nb_results) const;
+
+    void MakeGraph(const std::string& path, size_t nb_results) const;
 
   private:
     size_t nb_dims_;
@@ -106,7 +115,9 @@ unsigned int LinearSpace<ID>::Upsert(const SpaceInput<ID>& input) {
         return 0;
     }
 
+    size_t idx = ids_.size();
     ids_.emplace_back(input.id);
+    id2index_[input.id] = idx;
 
     for (size_t i = 0; i < nb_dims_; ++i) {
         point_floats_.emplace_back(input.point[i]);
@@ -284,6 +295,48 @@ void LinearSpace<ID>::GetNeighbors(const float* point, size_t nb_results,
     sort(results.begin(), results.end());
     if (nb_results < results.size()) {
         results.resize(nb_results);
+    }
+}
+
+template <typename ID>
+void LinearSpace<ID>::GetNeighbors(const ID& id, size_t nb_results,
+        vector<SpaceResult<ID>>& results) const
+{
+    auto it = id2index_.find(id);
+    if (it != id2index_.end()) {
+        auto i = it->second;
+        const float* vec = &(point_floats_[i * nb_dims_]);
+        GetNeighbors(vec, nb_results, results);
+    }
+}
+
+template <typename ID>
+void LinearSpace<ID>::MakeGraph(std::ostream& out, size_t nb_results) const {
+    // Iterate over all ids stored
+    size_t total = ids_.size();
+    auto progBar = ProgBar(total);
+    //#pragma omp parallel for shared(progBar)
+    for (size_t i = 0; i < total; ++i) {
+        auto id = ids_[i];
+        vector<SpaceResult<ID>> results;
+        GetNeighbors(id, nb_results, results);
+        //#pragma omp critical
+        {
+        progBar.update();
+        WriteResults(out, id, results);
+        }
+    }
+}
+
+template <typename ID>
+void LinearSpace<ID>::MakeGraph(const std::string& path, size_t nb_results) const {
+    if (path == "-") {
+        MakeGraph(std::cout, nb_results);
+    } else {
+        std::ofstream ofs;
+        ofs.open(path, std::ofstream::out | std::ofstream::trunc);
+        MakeGraph(ofs, nb_results);
+        ofs.close();
     }
 }
 

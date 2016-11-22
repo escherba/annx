@@ -3,13 +3,31 @@
 
 #include "common/ann_util.h"
 
-namespace ann{
+namespace ann {
 namespace util {
-void printProgBar(size_t idx, size_t total) {
 
-    // after https://nakkaya.com/2009/11/08/command-line-progress-bar/
+ProgBar::ProgBar(size_t total): pv_(1), total_(total), percent_(0) {
+    system("setterm -cursor off");
+}
+
+ProgBar::~ProgBar() {
+    std::cerr << std::endl;
+    system("setterm -cursor on");
+}
+
+void ProgBar::update(size_t count) {
+
+    // with changes after
+    // https://nakkaya.com/2009/11/08/command-line-progress-bar/
     //
-    auto percent = (idx * 100) / total;
+    auto percent = (pv_ * 100) / total_;
+    pv_ += count;
+
+    if (percent == percent_) {
+        return;
+    }
+
+    percent_ = percent;
     std::string bar;
 
     for (size_t i = 0; i < 50; i++) {

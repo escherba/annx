@@ -26,7 +26,7 @@ using std::multimap;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
-using ann::util::printProgBar;
+using ann::util::ProgBar;
 
 namespace /**** begin namespace ****/
 {
@@ -398,20 +398,28 @@ size_t LSHSpace<ID>::Size() const {
 }
 
 template <typename ID>
+inline void WriteResults(std::ostream& out, ID& id, vector<SpaceResult<ID>>& results) {
+    for (auto& result: results) {
+        out << id << "," << result.id << "," << result.dist << std::endl;
+    }
+}
+
+template <typename ID>
 void LSHSpace<ID>::MakeGraph(std::ostream& out, size_t nb_results) const {
     // Iterate over all ids stored
     size_t total = ids_.size();
-    size_t i = 1;
-    for (auto& id : ids_) {
-        printProgBar(i, total);
+    auto progBar = ProgBar(total);
+    #pragma omp parallel for shared(progBar)
+    for (size_t i = 0; i < total; ++i) {
+        auto id = ids_[i];
         vector<SpaceResult<ID>> results;
         GetNeighbors(id, nb_results, results);
-        for (auto& result : results) {
-            out << id << "," << result.id << "," << result.dist << std::endl;
+        #pragma omp critical
+        {
+        progBar.update();
+        WriteResults(out, id, results);
         }
-        i++;
     }
-    std::cerr << std::endl;
 }
 
 template <typename ID>
@@ -420,7 +428,7 @@ void LSHSpace<ID>::MakeGraph(const std::string& path, size_t nb_results) const {
         MakeGraph(std::cout, nb_results);
     } else {
         std::ofstream ofs;
-        ofs.open(path, std::ofstream::out | std::ofstream::app);
+        ofs.open(path, std::ofstream::out | std::ofstream::trunc);
         MakeGraph(ofs, nb_results);
         ofs.close();
     }

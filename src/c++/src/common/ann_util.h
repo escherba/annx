@@ -5,7 +5,18 @@
 namespace ann {
 namespace util {
 
-void printProgBar(size_t idx, size_t total);
+class ProgBar {
+    public:
+    ProgBar(size_t total);
+    ~ProgBar();
+
+    void update(size_t count=1);
+
+    private:
+    size_t pv_;
+    size_t total_;
+    size_t percent_;
+};
 
 }
 }

@@ -9,8 +9,6 @@
 #include <unordered_set>
 #include <unordered_map>
 
-#include <omp.h>
-
 #include <boost/bind.hpp>
 #include <boost/nondet_random.hpp>
 #include <boost/random.hpp>
@@ -28,7 +26,7 @@ using std::multimap;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
-using ann::util::printProgBar;
+using ann::util::ProgBar;
 
 namespace /**** begin namespace ****/
 {
@@ -419,23 +417,18 @@ template <typename ID>
 void LSHSpace<ID>::MakeGraph(std::ostream& out, size_t nb_results) const {
     // Iterate over all ids stored
     size_t total = ids_.size();
-    size_t pv = 1;
-    size_t i;
-    system("setterm -cursor off");
-    #pragma omp parallel for reduction(+:pv)
-    for (i = 0; i < ids_.size(); ++i) {
+    auto progBar = ProgBar(total);
+    #pragma omp parallel for shared(progBar)
+    for (size_t i = 0; i < total; ++i) {
         auto id = ids_[i];
         vector<SpaceResult<ID>> results;
         GetNeighbors(id, nb_results, results);
         #pragma omp critical
         {
-        printProgBar(pv, total / omp_get_num_threads());
+        progBar.update();
         WriteResults(out, id, results);
         }
-        pv++;
     }
-    std::cerr << std::endl;
-    system("setterm -cursor on");
 }
 
 template <typename ID>

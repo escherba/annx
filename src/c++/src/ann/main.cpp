@@ -1,6 +1,8 @@
 #include <ctime>
 #include <iostream>
 #include <fstream>
+#include <sstream>
+
 #include <gflags/gflags.h>
 #include <Eigen/Core>
 
@@ -60,7 +62,9 @@ void do_linear() {
 
 int main(int argc, char *argv[])
 {
-    gflags::SetUsageMessage("some usage message");
+    std::stringstream usage;
+    usage << argv[0] << " -input <path> -output <path>";
+    gflags::SetUsageMessage(usage.str());
     gflags::SetVersionString("0.0.1");
     gflags::ParseCommandLineFlags(&argc, &argv, true);
     if (FLAGS_verbose) std::cout << gflags::ProgramInvocationShortName() << ": ";

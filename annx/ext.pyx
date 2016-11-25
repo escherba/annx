@@ -13,20 +13,18 @@ from libc.stdint cimport uint32_t, uint64_t
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 
-cimport gauss_lsh
-from gauss_lsh cimport LSHSpace, SpaceInput, SpaceResult
+cimport space
+from space cimport LSHSpace, SpaceInput, SpaceResult
 
 np.import_array()
 
 
-cdef class ANNX:
+cdef class Indexer:
 
     cdef LSHSpace[uint64_t]* _indexer
     cdef uint32_t _rank
 
-    def __cinit__(self, uint32_t rank, L=15, k=32, w=0.5, search_k=0, seed=0):
-        self._indexer = new LSHSpace[uint64_t](seed)
-        self._indexer.Config(rank, L, k, w, search_k)
+    def __cinit__(self, uint32_t rank):
         self._rank = rank
 
     def remove(self, uint64_t id):
@@ -78,3 +76,11 @@ cdef class ANNX:
 
     def __dealloc__(self):
         del self._indexer
+
+
+cdef class LSHIndexer(Indexer):
+
+    def __cinit__(self, uint32_t rank, L=15, k=32, w=0.5, search_k=0, seed=0):
+        self._indexer = new LSHSpace[uint64_t](seed)
+        self._indexer.Config(rank, L, k, w, search_k)
+        Indexer.__cinit__(self, rank)

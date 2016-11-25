@@ -31,3 +31,17 @@ cdef extern from "ann/gauss_lsh.h" nogil:
                           vector[SpaceResult[T]]& results)
         void MakeGraph(const string& path, size_t nb_results)
         size_t Size()
+
+cdef extern from "ann/linear_space.h" nogil:
+    cdef cppclass LinearSpace[T]:
+        LinearSpace()
+        void Init(size_t nb_dims)
+        void Clear()
+        uint32_t Delete(const T& id)
+        uint32_t Upsert(const SpaceInput[T]& input)
+        void GetNeighborsById "GetNeighbors" (const T& id, size_t nb_results,
+                          vector[SpaceResult[T]]& results)
+        void GetNeighborsByPt "GetNeighbors" (const float* point, size_t nb_results,
+                          vector[SpaceResult[T]]& results)
+        void MakeGraph(const string& path, size_t nb_results)
+        size_t Size()

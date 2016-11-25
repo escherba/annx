@@ -3,12 +3,12 @@ import numpy as np
 import annx
 
 
-class TestIndexer(unittest.TestCase):
+class TestLSHSpace(unittest.TestCase):
 
     def test_query_point(self):
         """query_point method should work
         """
-        indexer = annx.ANNX(10)
+        indexer = annx.LSHSpace(10)
         vec = np.random.random(size=(10,)).astype(np.float32)
         indexer.upsert(1, vec)
         indexer.upsert(2, vec)
@@ -19,7 +19,7 @@ class TestIndexer(unittest.TestCase):
     def test_query_id(self):
         """query_id method should work
         """
-        indexer = annx.ANNX(10)
+        indexer = annx.LSHSpace(10)
         vec = np.random.random(size=(10,)).astype(np.float32)
         indexer.upsert(1, vec)
         indexer.upsert(2, vec)

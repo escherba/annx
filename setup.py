@@ -264,7 +264,7 @@ def define_extensions(use_cython=False):
             compile_args.append('-march=native')
 
     if use_cython:
-        sources = ["annx/ext.pyx", "annx/gauss_lsh.pxd"]
+        sources = ["annx/ext.pyx", "annx/space.pxd"]
     else:
         sources = ["annx/ext.cpp"]
     modules = [

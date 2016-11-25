@@ -3,7 +3,7 @@
 # cython: nonecheck=False
 # cython: infer_types=True
 
-__all__ = ["LSHIndexer"]
+__all__ = ["LinearIndexer", "LSHIndexer"]
 
 import numpy as np
 cimport numpy as np
@@ -14,18 +14,15 @@ from libcpp.string cimport string
 from libcpp.vector cimport vector
 
 cimport space
-from space cimport LSHSpace, SpaceInput, SpaceResult
+from space cimport Space, LinearSpace, LSHSpace, SpaceInput, SpaceResult
 
 np.import_array()
 
 
 cdef class Indexer:
 
-    cdef LSHSpace[uint64_t]* _indexer
+    cdef Space[uint64_t]* _indexer
     cdef uint32_t _rank
-
-    def __init__(self, uint32_t rank):
-        self._rank = rank
 
     def remove(self, uint64_t id):
         self._indexer.Delete(id)
@@ -66,21 +63,40 @@ cdef class Indexer:
         self._indexer.GetNeighborsByPt(<const float*>vec.data, n_neighbors, results)
         return self._query_result(results)
 
-    def make_graph(self, output, uint32_t nb_neighbors=10):
-        cdef string path
-        if isinstance(output, basestring):
-            path = output.encode("utf-8")
-            self._indexer.MakeGraph(path, nb_neighbors)
-        else:
-            raise TypeError(output)
+
+cdef class LSHIndexer(Indexer):
+
+    def __cinit__(self, uint32_t rank, L=15, k=32, w=0.5, search_k=0, seed=0):
+        self._indexer = new LSHSpace[uint64_t](seed)
+        (<LSHSpace[uint64_t] *>self._indexer).Config(rank, L, k, w, search_k)
+        self._rank = rank
 
     def __dealloc__(self):
         del self._indexer
 
+    def make_graph(self, output, uint32_t nb_neighbors=10):
+        cdef string path
+        if isinstance(output, basestring):
+            path = output.encode("utf-8")
+            (<LSHSpace[uint64_t] *>self._indexer).MakeGraph(path, nb_neighbors)
+        else:
+            raise TypeError(output)
 
-cdef class LSHIndexer(Indexer):
 
-    def __init__(self, uint32_t rank, L=15, k=32, w=0.5, search_k=0, seed=0):
-        self._indexer = new LSHSpace[uint64_t](seed)
-        self._indexer.Config(rank, L, k, w, search_k)
-        super(LSHIndexer, self).__init__(rank)
+cdef class LinearIndexer(Indexer):
+
+    def __cinit__(self, uint32_t rank):
+        self._indexer = new LinearSpace[uint64_t]()
+        self._indexer.Init(rank)
+        self._rank = rank
+
+    def __dealloc__(self):
+        del self._indexer
+
+    def make_graph(self, output, uint32_t nb_neighbors=10):
+        cdef string path
+        if isinstance(output, basestring):
+            path = output.encode("utf-8")
+            (<LSHSpace[uint64_t] *>self._indexer).MakeGraph(path, nb_neighbors)
+        else:
+            raise TypeError(output)

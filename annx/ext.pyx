@@ -3,7 +3,7 @@
 # cython: nonecheck=False
 # cython: infer_types=True
 
-__all__ = ["ANNX"]
+__all__ = ["LSHIndexer"]
 
 import numpy as np
 cimport numpy as np
@@ -24,7 +24,7 @@ cdef class Indexer:
     cdef LSHSpace[uint64_t]* _indexer
     cdef uint32_t _rank
 
-    def __cinit__(self, uint32_t rank):
+    def __init__(self, uint32_t rank):
         self._rank = rank
 
     def remove(self, uint64_t id):
@@ -80,7 +80,7 @@ cdef class Indexer:
 
 cdef class LSHIndexer(Indexer):
 
-    def __cinit__(self, uint32_t rank, L=15, k=32, w=0.5, search_k=0, seed=0):
+    def __init__(self, uint32_t rank, L=15, k=32, w=0.5, search_k=0, seed=0):
         self._indexer = new LSHSpace[uint64_t](seed)
         self._indexer.Config(rank, L, k, w, search_k)
-        Indexer.__cinit__(self, rank)
+        super(LSHIndexer, self).__init__(rank)

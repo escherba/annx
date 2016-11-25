@@ -18,7 +18,7 @@ cdef extern from "ann/space.h" nogil:
         bint operator == (SpaceResult&, SpaceResult&)
 
 
-cdef extern from "ann/gauss_lsh.h" nogil:
+cdef extern from "ann/space.h" nogil:
     cdef cppclass Space[T]:
         Space()
         void Init(size_t nb_dims)

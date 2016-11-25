@@ -260,6 +260,7 @@ def define_extensions(use_cython=False):
         if use_openmp:
             compile_args.append("-fopenmp")
             link_args.append("-fopenmp")
+            link_args.append("-lgomp")
 
         if 'anaconda' not in sys.version.lower():
             compile_args.append('-march=native')
@@ -281,6 +282,7 @@ def define_extensions(use_cython=False):
             ],
             language="c++",
             extra_compile_args=compile_args,
+            extra_link_args=link_args,
             include_dirs=[
                 numpy.get_include(),
                 "/usr/include/eigen3",

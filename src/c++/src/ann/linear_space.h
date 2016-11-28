@@ -11,13 +11,14 @@
 #include <unordered_map>
 #include <vector>
 
+#include <boost/align/aligned_allocator.hpp>
 #include "common/ann_util.h"
 #include "ann/space.h"
 
 using std::unordered_map;
 using std::vector;
 using std::set;
-
+using boost::alignment::aligned_allocator;
 using ann::util::ProgBar;
 
 template <typename ID>
@@ -52,7 +53,7 @@ class LinearSpace : public Space<ID> {
     size_t nb_dims_;
     unordered_map<ID, size_t> id2index_;
     vector<ID> ids_;
-    vector<float> point_floats_;
+    vector<float, aligned_allocator<float, 32>> point_floats_;
 };
 
 
@@ -142,8 +143,8 @@ void LinearSpace<ID>::GetNeighbors(const float* point, size_t nb_results,
     for (size_t i = 0; i < ids_.size(); ++i) {
         SpaceResult<ID> r;
         r.id = ids_[i];
-        const float* other_point = &point_floats_[i * nb_dims_];
-        r.dist = CosineDistance(point, other_point, nb_dims_);
+        const float* aligned_point = &point_floats_[i * nb_dims_];
+        r.dist = CosineDistance(aligned_point, point, nb_dims_);
         results->emplace_back(r);
     }
     sort(results->begin(), results->end());
@@ -165,7 +166,7 @@ struct LinearSpaceThreadData {
 
     size_t nb_dims;
     const vector<ID>* ids;
-    const vector<float>* point_floats;
+    const vector<float, aligned_allocator<float, 32>>* point_floats;
 
     vector<SpaceResult<ID>>* results;
 };
@@ -180,8 +181,8 @@ void* NeighborsSortMT(void* arg) {
     for (size_t i = begin; i < end; ++i) {
         SpaceResult<ID> r;
         r.id = (*data->ids)[i];
-        const float* other_point = &(*(data->point_floats))[i * data->nb_dims];
-        r.dist = CosineDistance(data->point, other_point, data->nb_dims);
+        const float* aligned_point = &(*(data->point_floats))[i * data->nb_dims];
+        r.dist = CosineDistance(aligned_point, data->point, data->nb_dims);
         data->results->emplace_back(r);
     }
     sort(data->results->begin(), data->results->end());
@@ -202,8 +203,8 @@ void* NeighborsKBestSetMT(void* arg) {
     for (size_t i = begin; i < end; ++i) {
         SpaceResult<ID> r;
         r.id = (*data->ids)[i];
-        const float* other_point = &(*(data->point_floats))[i * data->nb_dims];
-        r.dist = CosineDistance(data->point, other_point, data->nb_dims);
+        const float* aligned_point = &(*(data->point_floats))[i * data->nb_dims];
+        r.dist = CosineDistance(aligned_point, data->point, data->nb_dims);
         if (best.size() < data->nb_results) {
             best.insert(r);
         } else {
@@ -238,8 +239,8 @@ void* NeighborsKBestVectorMT(void* arg) {
     for (size_t i = begin; i < end; ++i) {
         SpaceResult<ID> r;
         r.id = (*data->ids)[i];
-        const float* other_point = &(*(data->point_floats))[i * data->nb_dims];
-        r.dist = CosineDistance(data->point, other_point, data->nb_dims);
+        const float* aligned_point = &(*(data->point_floats))[i * data->nb_dims];
+        r.dist = CosineDistance(aligned_point, data->point, data->nb_dims);
         if (bests.size() < data->nb_results) {
             bests.emplace_back(r);
             sort(bests.begin(), bests.end());

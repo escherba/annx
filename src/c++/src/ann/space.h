@@ -93,9 +93,9 @@ bool SpaceResult<ID>::operator==(const SpaceResult<ID>& o) const {
 }
 
 template <typename Float>
-Float EuclideanDistance(const Float* a, const Float* b, size_t dim) {
+inline Float EuclideanDistance(const Float* a, const Float* b, size_t dim) {
     Float result = 0.0;
-    #pragma omp simd reduction(+:result)
+    #pragma omp simd reduction(+:result) aligned(a:32)
     for (size_t i = 0; i < dim; ++i) {
         Float d = a[i] - b[i];
         result += d * d;
@@ -104,9 +104,9 @@ Float EuclideanDistance(const Float* a, const Float* b, size_t dim) {
 }
 
 template <typename Float>
-Float CosineDistance(const Float* a, const Float* b, size_t dim) {
+inline Float CosineDistance(const Float* a, const Float* b, size_t dim) {
     Float result = 0.0;
-    #pragma omp simd reduction(+:result)
+    #pragma omp simd reduction(+:result) aligned(a:32)
     for (size_t i = 0; i < dim; ++i) {
         result += a[i] * b[i];
     }

@@ -3,6 +3,7 @@
 #include <iterator>
 #include "gtest/gtest.h"
 #include "ann/gauss_lsh.h"
+#include "ann/linear_space.h"
 
 
 typedef uint32_t ID;
@@ -17,9 +18,29 @@ void RandomFill(_ForwardIterator first, _ForwardIterator last) {
 }
 
 
-TEST(ann_test, basic)
+TEST(ann_test, lsh)
 {
     LSHSpace<ID> indexer;
+    indexer.Init(10);
+
+    std::vector<float> vec;
+    vec.reserve(10);
+    RandomFill(vec.begin(), vec.end());
+    SpaceInput<ID> input;
+    input.id = 1;
+    input.point = vec.data();
+    indexer.Upsert(input);
+
+    std::vector<SpaceResult<ID>> results;
+    results.reserve(10);
+    indexer.GetNeighbors(input.id, 10, results);
+
+    ASSERT_EQ(results.size(), 1);
+}
+
+TEST(ann_test, linear)
+{
+    LinearSpace<ID> indexer;
     indexer.Init(10);
 
     std::vector<float> vec;

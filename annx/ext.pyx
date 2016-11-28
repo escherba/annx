@@ -41,15 +41,18 @@ cdef class Indexer:
         input.point = <const float*>vec.data
         return self._indexer.Upsert(input)
 
-    cdef _query_result(self, vector[SpaceResult[uint64_t]] results):
+    cdef tuple _query_result(self, vector[SpaceResult[uint64_t]] results):
+        cdef size_t sz = results.size()
         cdef np.ndarray[np.uint64_t, ndim=1] ids = \
-            np.ndarray(shape=(results.size(),), dtype=np.uint64)
+            np.empty(shape=(sz,), dtype=np.uint64)
         cdef np.ndarray[np.float32_t, ndim=1] distances = \
-            np.ndarray(shape=(results.size(),), dtype=np.float32)
-        cdef size_t i;
-        for i in xrange(results.size()):
-            ids[i] = results[i].id
-            distances[i] = results[i].dist
+            np.empty(shape=(sz,), dtype=np.float32)
+        cdef size_t i = 0;
+        cdef SpaceResult[uint64_t] result
+        for result in results:
+            ids[i] = result.id
+            distances[i] = result.dist
+            i += 1
         return (ids, distances)
 
     def query_id(self, uint64_t id, uint32_t n_neighbors=10):
@@ -66,7 +69,7 @@ cdef class Indexer:
 
 cdef class LSHIndexer(Indexer):
 
-    def __cinit__(self, uint32_t rank, L=15, k=32, w=0.5, search_k=0, seed=0):
+    def __cinit__(self, uint32_t rank, uint32_t L=15, uint32_t k=32, float w=0.5, uint32_t search_k=0, uint64_t seed=0):
         self._indexer = new LSHSpace[uint64_t](seed)
         (<LSHSpace[uint64_t] *>self._indexer).Config(rank, L, k, w, search_k)
         self._rank = rank

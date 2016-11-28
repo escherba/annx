@@ -21,7 +21,6 @@
 #include "ann/space.h"
 
 
-using std::isfinite;
 using std::multimap;
 using std::unordered_map;
 using std::unordered_set;
@@ -46,17 +45,6 @@ std::multimap<B,A> flip_map(const M<A,B,Args...> &src)
                    flip_pair<A,B>);
     return dst;
 }
-
-inline bool isfinite_xf(const float* arr, size_t n) {
-    const float* end = arr + n;
-    for (; arr < end; ++arr) {
-        if (!std::isfinite(*arr)) {
-            return false;
-        }
-    }
-    return true;
-}
-
 
 typedef unordered_map<std::string, std::unordered_set<size_t>> Bucket;
 
@@ -242,10 +230,10 @@ unsigned int LSHSpace<ID>::Upsert(const SpaceInput<ID>& input) {
     for (size_t i = 0; i < nb_dims_; ++i) {
         vec.emplace_back(input.point[i]);
     }
-
     auto evec = Eigen::Map<Eigen::VectorXf>(vec.data(), nb_dims_);
-    auto norm = evec.norm();
-    if (norm == 0.0) {
+
+    // Reject inputs whose norm equals zero
+    if (evec.norm() == 0.0) {
         return 0;
     }
 
@@ -260,7 +248,7 @@ unsigned int LSHSpace<ID>::Upsert(const SpaceInput<ID>& input) {
     _IterBuckets(evec, [this, idx] (size_t bucket_idx, const std::string &key) {
         auto& bucket = this->buckets_[bucket_idx];
         auto it = bucket.find(key);
-        if( it != bucket.end() ) {
+        if (it != bucket.end()) {
             it->second.insert(idx);
         }
         else {
@@ -281,7 +269,7 @@ void LSHSpace<ID>::GetNeighbors(const Eigen::VectorXf &evec, size_t nb_results,
     _IterBuckets(evec, [this, &counter] (size_t bucket_idx, const std::string &key) {
         auto& bucket = this->buckets_[bucket_idx];
         auto it = bucket.find(key);
-        if( it != bucket.end() ) {
+        if (it != bucket.end()) {
             auto& indices = it->second;
             for (auto idx : indices) {
                 counter[idx]++;
@@ -303,12 +291,12 @@ void LSHSpace<ID>::GetNeighbors(const Eigen::VectorXf &evec, size_t nb_results,
         auto& id = ids_[idx];
         SpaceResult<ID> slot;
         slot.id = id;
-        slot.dist = evec.dot(points_[idx]);  // calculate distance
+        slot.dist = 1.0 - evec.dot(points_[idx]);  // calculate distance
         candidates.emplace_back(slot);
         ++cit;
     }
     // next sort by distances in ascending order
-    std::sort(candidates.rbegin(), candidates.rend());
+    std::sort(candidates.begin(), candidates.end());
     results.reserve(nb_results);
     auto limit = std::min(candidates.size(), results.capacity());
     auto it = candidates.begin();

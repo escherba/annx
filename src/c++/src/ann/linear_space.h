@@ -16,7 +16,6 @@
 
 using std::unordered_map;
 using std::vector;
-using std::isnan;
 using std::set;
 
 using ann::util::ProgBar;
@@ -112,7 +111,14 @@ unsigned int LinearSpace<ID>::Upsert(const SpaceInput<ID>& input) {
     Delete(input.id);
 
     // Reject NaN entries.
-    if (isnan(input.point[0])) {
+    if (!isfinite_xf(input.point, nb_dims_)) {
+        return 0;
+    }
+
+    float dst[nb_dims_];
+
+    // Reject inputs whose norm equals zero
+    if (!normalize(dst, input.point, nb_dims_)) {
         return 0;
     }
 
@@ -121,7 +127,7 @@ unsigned int LinearSpace<ID>::Upsert(const SpaceInput<ID>& input) {
     id2index_[input.id] = idx;
 
     for (size_t i = 0; i < nb_dims_; ++i) {
-        point_floats_.emplace_back(input.point[i]);
+        point_floats_.emplace_back(dst[i]);
     }
 
     return 1;
@@ -137,7 +143,7 @@ void LinearSpace<ID>::GetNeighbors(const float* point, size_t nb_results,
         SpaceResult<ID> r;
         r.id = ids_[i];
         const float* other_point = &point_floats_[i * nb_dims_];
-        r.dist = EuclideanDistance(point, other_point, nb_dims_);
+        r.dist = CosineDistance(point, other_point, nb_dims_);
         results->emplace_back(r);
     }
     sort(results->begin(), results->end());
@@ -175,7 +181,7 @@ void* NeighborsSortMT(void* arg) {
         SpaceResult<ID> r;
         r.id = (*data->ids)[i];
         const float* other_point = &(*(data->point_floats))[i * data->nb_dims];
-        r.dist = EuclideanDistance(data->point, other_point, data->nb_dims);
+        r.dist = CosineDistance(data->point, other_point, data->nb_dims);
         data->results->emplace_back(r);
     }
     sort(data->results->begin(), data->results->end());
@@ -197,7 +203,7 @@ void* NeighborsKBestSetMT(void* arg) {
         SpaceResult<ID> r;
         r.id = (*data->ids)[i];
         const float* other_point = &(*(data->point_floats))[i * data->nb_dims];
-        r.dist = EuclideanDistance(data->point, other_point, data->nb_dims);
+        r.dist = CosineDistance(data->point, other_point, data->nb_dims);
         if (best.size() < data->nb_results) {
             best.insert(r);
         } else {
@@ -233,7 +239,7 @@ void* NeighborsKBestVectorMT(void* arg) {
         SpaceResult<ID> r;
         r.id = (*data->ids)[i];
         const float* other_point = &(*(data->point_floats))[i * data->nb_dims];
-        r.dist = EuclideanDistance(data->point, other_point, data->nb_dims);
+        r.dist = CosineDistance(data->point, other_point, data->nb_dims);
         if (bests.size() < data->nb_results) {
             bests.emplace_back(r);
             sort(bests.begin(), bests.end());
@@ -316,16 +322,12 @@ void LinearSpace<ID>::MakeGraph(std::ostream& out, size_t nb_results) const {
     // Iterate over all ids stored
     size_t total = ids_.size();
     auto progBar = ProgBar(total);
-    //#pragma omp parallel for shared(progBar)
     for (size_t i = 0; i < total; ++i) {
         auto id = ids_[i];
         vector<SpaceResult<ID>> results;
         GetNeighbors(id, nb_results, results);
-        //#pragma omp critical
-        {
         progBar.update();
         WriteResults(out, id, results);
-        }
     }
 }
 

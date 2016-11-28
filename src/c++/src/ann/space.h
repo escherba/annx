@@ -9,6 +9,7 @@
 
 using std::string;
 using std::vector;
+using std::isfinite;
 
 template <typename ID>
 struct SpaceInput {
@@ -77,11 +78,6 @@ unsigned int Space<ID>::UpsertMany(const vector<SpaceInput<ID>>& inputs) {
     return count;
 }
 
-
-template <typename Float>
-Float EuclideanDistance(const Float* a, const Float* b, size_t embed_dim);
-
-
 template <typename ID>
 bool SpaceResult<ID>::operator<(const SpaceResult<ID>& o) const {
     if (dist == o.dist) {
@@ -98,11 +94,59 @@ bool SpaceResult<ID>::operator==(const SpaceResult<ID>& o) const {
 
 template <typename Float>
 Float EuclideanDistance(const Float* a, const Float* b, size_t dim) {
-    float r = 0;
+    Float result = 0.0;
+    #pragma omp simd reduction(+:result)
     for (size_t i = 0; i < dim; ++i) {
-        r += (a[i] - b[i]) * (a[i] - b[i]);
+        Float d = a[i] - b[i];
+        result += d * d;
     }
-    return (Float)sqrt(r);
+    return (Float)sqrt(result);
+}
+
+template <typename Float>
+Float CosineDistance(const Float* a, const Float* b, size_t dim) {
+    Float result = 0.0;
+    #pragma omp simd reduction(+:result)
+    for (size_t i = 0; i < dim; ++i) {
+        result += a[i] * b[i];
+    }
+    return (Float)(1.0 - result);
+}
+
+template <typename Float>
+inline bool isfinite_xf(const Float* arr, size_t dim) {
+    const Float* end = arr + dim;
+    for (; arr < end; ++arr) {
+        if (!std::isfinite(*arr)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+template <typename Float>
+inline Float norm(const Float* a, size_t dim) {
+    Float result = 0.0;
+    #pragma omp simd reduction(+:result)
+    for (size_t i = 0; i < dim; ++i) {
+        Float el = a[i];
+        result += el * el;
+    }
+    return (Float)sqrt(result);
+}
+
+template <typename Float>
+bool normalize(Float* dst, const Float* src, size_t dim) {
+    Float factor = 1.0 / norm(src, dim);
+    if (!std::isfinite(factor)) {
+        return false;
+    }
+    #pragma omp simd linear(src,dst)
+    for (size_t i = 0; i < dim; ++i) {
+        *dst = *src * factor;
+        src++; dst++;
+    }
+    return true;
 }
 
 // ----------------------------

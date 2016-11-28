@@ -137,13 +137,17 @@ inline Float norm(const Float* a, size_t dim) {
 }
 
 template <typename Float>
-void normalize(Float* dst, const Float* src, size_t dim) {
+bool normalize(Float* dst, const Float* src, size_t dim) {
     Float factor = 1.0 / norm(src, dim);
+    if (!std::isfinite(factor)) {
+        return false;
+    }
     #pragma omp simd linear(src,dst)
     for (size_t i = 0; i < dim; ++i) {
         *dst = *src * factor;
         src++; dst++;
     }
+    return true;
 }
 
 // ----------------------------

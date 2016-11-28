@@ -115,13 +115,12 @@ unsigned int LinearSpace<ID>::Upsert(const SpaceInput<ID>& input) {
         return 0;
     }
 
+    float dst[nb_dims_];
+
     // Reject inputs whose norm equals zero
-    if (norm(input.point, nb_dims_) == 0.0) {
+    if (!normalize(dst, input.point, nb_dims_)) {
         return 0;
     }
-
-    float dst[nb_dims_];
-    normalize(dst, input.point, nb_dims_);
 
     size_t idx = ids_.size();
     ids_.emplace_back(input.id);

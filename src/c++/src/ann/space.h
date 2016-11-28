@@ -127,7 +127,6 @@ inline bool isfinite_xf(const Float* arr, size_t dim) {
 template <typename Float>
 inline Float norm(const Float* a, size_t dim) {
     Float result = 0.0;
-    const Float *end = a + dim;
     #pragma omp simd reduction(+:result)
     for (size_t i = 0; i < dim; ++i) {
         Float el = a[i];

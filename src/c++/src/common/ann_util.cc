@@ -10,12 +10,12 @@ namespace util {
 ProgBar::ProgBar(size_t total)
     : pv_(1), total_(total), percent_(0)
 {
-    std::system("setterm -cursor off");
+    //std::system("setterm -cursor off");
 }
 
 ProgBar::~ProgBar() {
     std::cerr << std::endl;
-    std::system("setterm -cursor on");
+    //std::system("setterm -cursor on");
 }
 
 void ProgBar::update(size_t count) {

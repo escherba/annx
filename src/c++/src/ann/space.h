@@ -97,7 +97,8 @@ Float EuclideanDistance(const Float* a, const Float* b, size_t dim) {
     Float result = 0.0;
     #pragma omp simd reduction(+:result)
     for (size_t i = 0; i < dim; ++i) {
-        result += (a[i] - b[i]) * (a[i] - b[i]);
+        Float d = a[i] - b[i];
+        result += d * d;
     }
     return (Float)sqrt(result);
 }
@@ -124,12 +125,12 @@ inline bool isfinite_xf(const Float* arr, size_t dim) {
 }
 
 template <typename Float>
-inline Float norm(const Float* arr, size_t dim) {
+inline Float norm(const Float* a, size_t dim) {
     Float result = 0.0;
-    const Float *end = arr + dim;
+    const Float *end = a + dim;
     #pragma omp simd reduction(+:result)
     for (size_t i = 0; i < dim; ++i) {
-        Float el = arr[i];
+        Float el = a[i];
         result += el * el;
     }
     return (Float)sqrt(result);

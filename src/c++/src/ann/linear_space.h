@@ -120,12 +120,15 @@ unsigned int LinearSpace<ID>::Upsert(const SpaceInput<ID>& input) {
         return 0;
     }
 
+    float dst[nb_dims_];
+    normalize(dst, input.point, nb_dims_);
+
     size_t idx = ids_.size();
     ids_.emplace_back(input.id);
     id2index_[input.id] = idx;
 
     for (size_t i = 0; i < nb_dims_; ++i) {
-        point_floats_.emplace_back(input.point[i]);
+        point_floats_.emplace_back(dst[i]);
     }
 
     return 1;

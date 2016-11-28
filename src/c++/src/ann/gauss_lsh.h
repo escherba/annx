@@ -291,12 +291,12 @@ void LSHSpace<ID>::GetNeighbors(const Eigen::VectorXf &evec, size_t nb_results,
         auto& id = ids_[idx];
         SpaceResult<ID> slot;
         slot.id = id;
-        slot.dist = evec.dot(points_[idx]);  // calculate distance
+        slot.dist = 1.0 - evec.dot(points_[idx]);  // calculate distance
         candidates.emplace_back(slot);
         ++cit;
     }
     // next sort by distances in ascending order
-    std::sort(candidates.rbegin(), candidates.rend());
+    std::sort(candidates.begin(), candidates.end());
     results.reserve(nb_results);
     auto limit = std::min(candidates.size(), results.capacity());
     auto it = candidates.begin();

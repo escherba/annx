@@ -5,10 +5,10 @@
 namespace ann {
 namespace util {
 
-class ProgBar {
+class ProgressBar {
     public:
-    ProgBar(size_t total);
-    ~ProgBar();
+    ProgressBar(size_t total);
+    ~ProgressBar();
 
     void update(size_t count=1);
 

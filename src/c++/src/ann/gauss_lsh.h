@@ -25,7 +25,7 @@ using std::multimap;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
-using ann::util::ProgBar;
+using ann::util::ProgressBar;
 
 namespace /**** begin namespace ****/
 {
@@ -396,7 +396,7 @@ template <typename ID>
 void LSHSpace<ID>::MakeGraph(std::ostream& out, size_t nb_results) const {
     // Iterate over all ids stored
     size_t total = ids_.size();
-    auto progBar = ProgBar(total);
+    auto progBar = ProgressBar(total);
     #pragma omp parallel for shared(progBar)
     for (size_t i = 0; i < total; ++i) {
         auto id = ids_[i];

@@ -7,18 +7,18 @@
 namespace ann {
 namespace util {
 
-ProgBar::ProgBar(size_t total)
+ProgressBar::ProgressBar(size_t total)
     : pv_(1), total_(total), percent_(0)
 {
     //std::system("setterm -cursor off");
 }
 
-ProgBar::~ProgBar() {
+ProgressBar::~ProgressBar() {
     std::cerr << std::endl;
     //std::system("setterm -cursor on");
 }
 
-void ProgBar::update(size_t count) {
+void ProgressBar::update(size_t count) {
 
     // with changes after
     // https://nakkaya.com/2009/11/08/command-line-progress-bar/

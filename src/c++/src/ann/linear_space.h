@@ -19,7 +19,7 @@ using std::unordered_map;
 using std::vector;
 using std::set;
 using boost::alignment::aligned_allocator;
-using ann::util::ProgBar;
+using ann::util::ProgressBar;
 
 template <typename ID>
 class LinearSpace : public Space<ID> {
@@ -82,10 +82,6 @@ void LinearSpace<ID>::Clear() {
 
 template <typename ID>
 unsigned int LinearSpace<ID>::Delete(const ID& id) {
-    // If we have nothing, no lookup needed.
-    if (ids_.empty()) {
-        return 0;
-    }
 
     // Look up the ID.
     auto it = id2index_.find(id);
@@ -322,7 +318,7 @@ template <typename ID>
 void LinearSpace<ID>::MakeGraph(std::ostream& out, size_t nb_results) const {
     // Iterate over all ids stored
     size_t total = ids_.size();
-    auto progBar = ProgBar(total);
+    auto progBar = ProgressBar(total);
     for (size_t i = 0; i < total; ++i) {
         auto id = ids_[i];
         vector<SpaceResult<ID>> results;

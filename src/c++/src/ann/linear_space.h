@@ -96,9 +96,9 @@ unsigned int LinearSpace<ID>::Delete(const ID& id) {
 
     /*
     std::copy(
-            point_floats_.data() + ndim_ * ids_.size(),
-            point_floats_.data() + ndim_ * ids_.size() + ndim_,
-            point_floats_.data() + ndim_ * index);
+            &point_floats_[ndim_ * ids_.size()],
+            &point_floats_[ndim_ * ids_.size() + ndim_],
+            &point_floats_[ndim_ * index]);
     */
     for (size_t i = 0; i < ndim_; ++i) {
         size_t to_index = index * ndim_ + i;

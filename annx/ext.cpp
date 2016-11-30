@@ -2612,7 +2612,7 @@ static PyObject *__pyx_pf_4annx_3ext_7Indexer_12make_graph(struct __pyx_obj_4ann
  *         cdef string path
  *         if isinstance(output, basestring):             # <<<<<<<<<<<<<<
  *             path = output.encode("utf-8")
- *             self._indexer.MakeGraph(path, nb_neighbors)
+ *             self._indexer.GraphToPath(path, nb_neighbors)
  */
   __pyx_t_1 = __Pyx_PyBaseString_Check(__pyx_v_output); 
   __pyx_t_2 = (__pyx_t_1 != 0);
@@ -2622,7 +2622,7 @@ static PyObject *__pyx_pf_4annx_3ext_7Indexer_12make_graph(struct __pyx_obj_4ann
  *         cdef string path
  *         if isinstance(output, basestring):
  *             path = output.encode("utf-8")             # <<<<<<<<<<<<<<
- *             self._indexer.MakeGraph(path, nb_neighbors)
+ *             self._indexer.GraphToPath(path, nb_neighbors)
  *         else:
  */
     __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_output, __pyx_n_s_encode); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 72, __pyx_L1_error)
@@ -2637,24 +2637,24 @@ static PyObject *__pyx_pf_4annx_3ext_7Indexer_12make_graph(struct __pyx_obj_4ann
     /* "annx/ext.pyx":73
  *         if isinstance(output, basestring):
  *             path = output.encode("utf-8")
- *             self._indexer.MakeGraph(path, nb_neighbors)             # <<<<<<<<<<<<<<
+ *             self._indexer.GraphToPath(path, nb_neighbors)             # <<<<<<<<<<<<<<
  *         else:
  *             raise TypeError(output)
  */
-    __pyx_v_self->_indexer->MakeGraph(__pyx_v_path, __pyx_v_nb_neighbors);
+    __pyx_v_self->_indexer->GraphToPath(__pyx_v_path, __pyx_v_nb_neighbors);
 
     /* "annx/ext.pyx":71
  *     def make_graph(self, output, uint32_t nb_neighbors=10):
  *         cdef string path
  *         if isinstance(output, basestring):             # <<<<<<<<<<<<<<
  *             path = output.encode("utf-8")
- *             self._indexer.MakeGraph(path, nb_neighbors)
+ *             self._indexer.GraphToPath(path, nb_neighbors)
  */
     goto __pyx_L3;
   }
 
   /* "annx/ext.pyx":75
- *             self._indexer.MakeGraph(path, nb_neighbors)
+ *             self._indexer.GraphToPath(path, nb_neighbors)
  *         else:
  *             raise TypeError(output)             # <<<<<<<<<<<<<<
  * 
@@ -5983,7 +5983,7 @@ static int __Pyx_InitCachedConstants(void) {
  *         cdef string path
  *         if isinstance(output, basestring):
  *             path = output.encode("utf-8")             # <<<<<<<<<<<<<<
- *             self._indexer.MakeGraph(path, nb_neighbors)
+ *             self._indexer.GraphToPath(path, nb_neighbors)
  *         else:
  */
   __pyx_tuple_ = PyTuple_Pack(1, __pyx_kp_s_utf_8); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 72, __pyx_L1_error)

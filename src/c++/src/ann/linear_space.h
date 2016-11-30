@@ -41,19 +41,20 @@ class LinearSpace : public Space<ID> {
     void GetNeighbors(const ID& id, size_t nb_results,
             vector<SpaceResult<ID>>& results) const override;
 
-    void MakeGraph(std::ostream& out, size_t nb_results) const override;
+    void GraphToStream(std::ostream& out, size_t nb_results) const override;
 
-    void MakeGraph(const std::string& path, size_t nb_results) const;
+    // Get the number of elements stored.
+    size_t Size() const override { return ids_.size(); }
 
-  protected:
-    size_t nb_dims_;
-    vector<ID> ids_;
+    // Get Dimensionality
+    size_t Dim() const override { return ndim_; }
 
   private:
+    size_t ndim_;
+    vector<ID> ids_;
     unordered_map<ID, size_t> id2index_;
     vector<float, aligned_allocator<float, 32>> point_floats_;
 };
-
 
 template <typename ID>
 LinearSpace<ID>::LinearSpace() {
@@ -65,7 +66,7 @@ LinearSpace<ID>::~LinearSpace() {
 
 template <typename ID>
 void LinearSpace<ID>::Init(size_t nb_dims) {
-    nb_dims_ = nb_dims;
+    ndim_ = nb_dims;
     id2index_.clear();
     ids_.clear();
     point_floats_.clear();
@@ -95,16 +96,16 @@ unsigned int LinearSpace<ID>::Delete(const ID& id) {
 
     /*
     std::copy(
-            point_floats_.data() + nb_dims_ * ids_.size(),
-            point_floats_.data() + nb_dims_ * ids_.size() + nb_dims_,
-            point_floats_.data() + nb_dims_ * index);
+            point_floats_.data() + ndim_ * ids_.size(),
+            point_floats_.data() + ndim_ * ids_.size() + ndim_,
+            point_floats_.data() + ndim_ * index);
     */
-    for (size_t i = 0; i < nb_dims_; ++i) {
-        size_t to_index = index * nb_dims_ + i;
-        size_t from_index = ids_.size() * nb_dims_ + i;
+    for (size_t i = 0; i < ndim_; ++i) {
+        size_t to_index = index * ndim_ + i;
+        size_t from_index = ids_.size() * ndim_ + i;
         point_floats_[to_index] = point_floats_[from_index];
     }
-    point_floats_.resize(ids_.size() * nb_dims_);
+    point_floats_.resize(ids_.size() * ndim_);
     return 1;
 }
 
@@ -113,14 +114,14 @@ unsigned int LinearSpace<ID>::Upsert(const SpaceInput<ID>& input) {
     Delete(input.id);
 
     // Reject NaN entries.
-    if (!isfinite_xf(input.point, nb_dims_)) {
+    if (!isfinite_xf(input.point, ndim_)) {
         return 0;
     }
 
-    float tmp[nb_dims_];
+    float tmp[ndim_];
 
     // Reject inputs whose norm equals zero
-    if (!normalize(tmp, input.point, nb_dims_)) {
+    if (!normalize(tmp, input.point, ndim_)) {
         return 0;
     }
 
@@ -128,7 +129,7 @@ unsigned int LinearSpace<ID>::Upsert(const SpaceInput<ID>& input) {
     ids_.emplace_back(input.id);
     id2index_[input.id] = idx;
 
-    for (size_t i = 0; i < nb_dims_; ++i) {
+    for (size_t i = 0; i < ndim_; ++i) {
         point_floats_.emplace_back(tmp[i]);
     }
 
@@ -144,8 +145,8 @@ void LinearSpace<ID>::GetNeighbors(const float* point, size_t nb_results,
     for (size_t i = 0; i < ids_.size(); ++i) {
         SpaceResult<ID> r;
         r.id = ids_[i];
-        const float* aligned_point = &point_floats_[i * nb_dims_];
-        r.dist = CosineDistance(aligned_point, point, nb_dims_);
+        const float* aligned_point = &point_floats_[i * ndim_];
+        r.dist = CosineDistance(aligned_point, point, ndim_);
         results->emplace_back(r);
     }
     sort(results->begin(), results->end());
@@ -285,7 +286,7 @@ void LinearSpace<ID>::GetNeighbors(const float* point, size_t nb_results,
         info.nb_threads = nb_threads;
         info.point = point;
         info.nb_results = nb_results;
-        info.nb_dims = nb_dims_;
+        info.nb_dims = ndim_;
         info.ids = &ids_;
         info.point_floats = &point_floats_;
         info.results = &results_per_thread[i];
@@ -314,13 +315,13 @@ void LinearSpace<ID>::GetNeighbors(const ID& id, size_t nb_results,
     auto it = id2index_.find(id);
     if (it != id2index_.end()) {
         auto i = it->second;
-        const float* vec = &(point_floats_[i * nb_dims_]);
+        const float* vec = &(point_floats_[i * ndim_]);
         GetNeighbors(vec, nb_results, results);
     }
 }
 
 template <typename ID>
-void LinearSpace<ID>::MakeGraph(std::ostream& out, size_t nb_results) const {
+void LinearSpace<ID>::GraphToStream(std::ostream& out, size_t nb_results) const {
     // Iterate over all ids stored
     size_t total = ids_.size();
     auto progBar = ProgressBar(total);
@@ -330,17 +331,5 @@ void LinearSpace<ID>::MakeGraph(std::ostream& out, size_t nb_results) const {
         GetNeighbors(id, nb_results, results);
         progBar.update();
         WriteResults(out, id, results);
-    }
-}
-
-template <typename ID>
-void LinearSpace<ID>::MakeGraph(const std::string& path, size_t nb_results) const {
-    if (path == "-") {
-        MakeGraph(std::cout, nb_results);
-    } else {
-        std::ofstream ofs;
-        ofs.open(path, std::ofstream::out | std::ofstream::trunc);
-        MakeGraph(ofs, nb_results);
-        ofs.close();
     }
 }

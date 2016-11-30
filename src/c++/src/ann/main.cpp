@@ -28,32 +28,32 @@ DEFINE_uint64(search_k, 0, "k-value (if 0, then equal to L * n_neighbors");
 using spark::LoadFiles;
 
 void do_lsh() {
-    LSHSpace<uint32_t> embedding_space_;
-    embedding_space_.Init(128);
+    LSHSpace<uint32_t> space_;
+    space_.Init(128);
 
     auto t0 = std::clock();
-    spark::LoadFiles(FLAGS_input, &embedding_space_);
+    spark::LoadFiles(FLAGS_input, &space_);
     auto t1 = std::clock();
     double d1 = (t1 - t0) / (double) CLOCKS_PER_SEC;
     std::cerr << "time to load files: " << d1 << " sec" << std::endl;
 
-    embedding_space_.MakeGraph(FLAGS_output, FLAGS_n_neighbors);
+    space_.GraphToPath(FLAGS_output, FLAGS_n_neighbors);
     auto t2 = std::clock();
     double d2 = (t2 - t1) / (double) CLOCKS_PER_SEC;
     std::cerr << "time to create graph: " << d2 << " sec" << std::endl;
 }
 
 void do_linear() {
-    LinearSpace<uint32_t> embedding_space_;
-    embedding_space_.Init(128);
+    LinearSpace<uint32_t> space_;
+    space_.Init(128);
 
     auto t0 = std::clock();
-    spark::LoadFiles(FLAGS_input, &embedding_space_);
+    spark::LoadFiles(FLAGS_input, &space_);
     auto t1 = std::clock();
     double d1 = (t1 - t0) / (double) CLOCKS_PER_SEC;
     std::cerr << "time to load files: " << d1 << " sec" << std::endl;
 
-    embedding_space_.MakeGraph(FLAGS_output, FLAGS_n_neighbors);
+    space_.GraphToPath(FLAGS_output, FLAGS_n_neighbors);
     auto t2 = std::clock();
     double d2 = (t2 - t1) / (double) CLOCKS_PER_SEC;
     std::cerr << "time to create graph: " << d2 << " sec" << std::endl;

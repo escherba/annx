@@ -70,7 +70,7 @@ cdef class Indexer:
         cdef string path
         if isinstance(output, basestring):
             path = output.encode("utf-8")
-            self._indexer.MakeGraph(path, nb_neighbors)
+            self._indexer.GraphToPath(path, nb_neighbors)
         else:
             raise TypeError(output)
 

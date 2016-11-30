@@ -29,6 +29,7 @@ cdef extern from "ann/space.h" nogil:
                           vector[SpaceResult[T]]& results)
         void GetNeighborsByPt "GetNeighbors" (const float* point, size_t nb_results,
                           vector[SpaceResult[T]]& results)
+        void MakeGraph(const string& path, size_t nb_results)
         size_t Size()
 
 

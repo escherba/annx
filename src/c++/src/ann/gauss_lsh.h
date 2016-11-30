@@ -74,13 +74,13 @@ class LSHSpace : public Space<ID> {
         void GetNeighbors(const ID& id, size_t nb_results,
                 vector<SpaceResult<ID>>& results) const override;
 
-        size_t Size() const override;
+        void MakeGraph(std::ostream& out, size_t nb_results) const override;
 
-        void Info(FILE* log, size_t indent=2, size_t indent_incr=4) const override;
+        void MakeGraph(const std::string& path, size_t nb_results) const override;
 
-        void MakeGraph(std::ostream& out, size_t nb_results) const;
-
-        void MakeGraph(const std::string& path, size_t nb_results) const;
+    protected:
+        size_t nb_dims_;
+        vector<ID> ids_;
 
     private:
 
@@ -94,12 +94,9 @@ class LSHSpace : public Space<ID> {
         void GetNeighbors(const Eigen::VectorXf &vec, size_t nb_results,
             vector<SpaceResult<ID>>& results) const;
 
-        size_t nb_dims_;
-
         // dynamically allocated members
         // actual data stored
         unordered_map<ID, size_t> id2index_;
-        vector<ID> ids_;
         vector<Eigen::VectorXf> points_;
 
         // dynamically allocated members (2)
@@ -381,11 +378,6 @@ void LSHSpace<ID>::_InitOffsets() {
 }
 
 template <typename ID>
-size_t LSHSpace<ID>::Size() const {
-    return ids_.size();
-}
-
-template <typename ID>
 inline void WriteResults(std::ostream& out, ID& id, vector<SpaceResult<ID>>& results) {
     for (auto& result: results) {
         out << id << "," << result.id << "," << result.dist << std::endl;
@@ -421,10 +413,3 @@ void LSHSpace<ID>::MakeGraph(const std::string& path, size_t nb_results) const {
         ofs.close();
     }
 }
-
-template <typename ID>
-void LSHSpace<ID>::Info(FILE* log, size_t indent, size_t indent_incr) const {
-    const char* zero = string(indent, ' ').c_str();
-    fprintf(log, "%sitems: %zu\n", zero, ids_.size());
-}
-

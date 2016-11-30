@@ -3,13 +3,14 @@
 #include <cmath>
 #include <cstddef>
 #include <cstdio>
+#include <fstream>
+#include <iostream>
 #include <vector>
 #include <string>
 
 
 using std::string;
 using std::vector;
-using std::isfinite;
 
 template <typename ID>
 struct SpaceInput {
@@ -17,6 +18,7 @@ struct SpaceInput {
     const float* point;
 };
 
+/* begin SpaceResult<ID> */
 template <typename ID>
 struct SpaceResult {
     ID id;
@@ -25,6 +27,21 @@ struct SpaceResult {
     bool operator==(const SpaceResult& o) const;
 };
 
+template <typename ID>
+bool SpaceResult<ID>::operator<(const SpaceResult<ID>& o) const {
+    if (dist == o.dist) {
+        return id < o.id;
+    }
+    return dist < o.dist;
+}
+
+template <typename ID>
+bool SpaceResult<ID>::operator==(const SpaceResult<ID>& o) const {
+    return id == o.id && dist == o.dist;
+}
+/* end SpaceResult<ID> */
+
+/* beghin Space<ID> */
 template <typename ID>
 class Space {
   public:
@@ -52,12 +69,22 @@ class Space {
     virtual void GetNeighbors(const ID& id, size_t nb_results,
             vector<SpaceResult<ID>>& results) const = 0;
 
+    virtual void MakeGraph(std::ostream& out, size_t nb_results) const = 0;
+
+    virtual void MakeGraph(const std::string& path, size_t nb_results) const = 0;
+
     // Get the number of elements stored.
-    virtual size_t Size() const = 0;
+    virtual size_t Size() const { return ids_.size(); }
+
+    // Get Dimensionality
+    virtual size_t Dim() const { return nb_dims_; }
 
     // Dump statistics about internals.
     virtual void Info(FILE* log, size_t indent=2,
-                      size_t indent_incr=4) const = 0;
+                      size_t indent_incr=4) const;
+  protected:
+    size_t nb_dims_;
+    vector<ID> ids_;
 };
 
 template <typename ID>
@@ -79,18 +106,12 @@ unsigned int Space<ID>::UpsertMany(const vector<SpaceInput<ID>>& inputs) {
 }
 
 template <typename ID>
-bool SpaceResult<ID>::operator<(const SpaceResult<ID>& o) const {
-    if (dist == o.dist) {
-        return id < o.id;
-    }
-
-    return dist < o.dist;
+void Space<ID>::Info(FILE* log, size_t indent, size_t indent_incr) const {
+    const char* zero = string(indent, ' ').c_str();
+    fprintf(log, "%sitems: %zu\n", zero, ids_.size());
 }
 
-template <typename ID>
-bool SpaceResult<ID>::operator==(const SpaceResult<ID>& o) const {
-    return id == o.id && dist == o.dist;
-}
+/* end Space<ID> */
 
 template <typename Float>
 inline Float EuclideanDistance(const Float* a, const Float* b, size_t dim) {

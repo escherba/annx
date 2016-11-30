@@ -41,18 +41,16 @@ class LinearSpace : public Space<ID> {
     void GetNeighbors(const ID& id, size_t nb_results,
             vector<SpaceResult<ID>>& results) const override;
 
-    size_t Size() const override;
-
-    void Info(FILE* log, size_t indent=2, size_t indent_incr=4) const override;
-
-    void MakeGraph(std::ostream& out, size_t nb_results) const;
+    void MakeGraph(std::ostream& out, size_t nb_results) const override;
 
     void MakeGraph(const std::string& path, size_t nb_results) const;
 
-  private:
+  protected:
     size_t nb_dims_;
-    unordered_map<ID, size_t> id2index_;
     vector<ID> ids_;
+
+  private:
+    unordered_map<ID, size_t> id2index_;
     vector<float, aligned_allocator<float, 32>> point_floats_;
 };
 
@@ -94,6 +92,13 @@ unsigned int LinearSpace<ID>::Delete(const ID& id) {
     id2index_[ids_[ids_.size() - 1]] = index;
     ids_[index] = ids_[ids_.size() - 1];
     ids_.resize(ids_.size() - 1);
+
+    /*
+    std::copy(
+            point_floats_.data() + nb_dims_ * ids_.size(),
+            point_floats_.data() + nb_dims_ * ids_.size() + nb_dims_,
+            point_floats_.data() + nb_dims_ * index);
+    */
     for (size_t i = 0; i < nb_dims_; ++i) {
         size_t to_index = index * nb_dims_ + i;
         size_t from_index = ids_.size() * nb_dims_ + i;
@@ -112,10 +117,10 @@ unsigned int LinearSpace<ID>::Upsert(const SpaceInput<ID>& input) {
         return 0;
     }
 
-    float dst[nb_dims_];
+    float tmp[nb_dims_];
 
     // Reject inputs whose norm equals zero
-    if (!normalize(dst, input.point, nb_dims_)) {
+    if (!normalize(tmp, input.point, nb_dims_)) {
         return 0;
     }
 
@@ -124,7 +129,7 @@ unsigned int LinearSpace<ID>::Upsert(const SpaceInput<ID>& input) {
     id2index_[input.id] = idx;
 
     for (size_t i = 0; i < nb_dims_; ++i) {
-        point_floats_.emplace_back(dst[i]);
+        point_floats_.emplace_back(tmp[i]);
     }
 
     return 1;
@@ -338,15 +343,4 @@ void LinearSpace<ID>::MakeGraph(const std::string& path, size_t nb_results) cons
         MakeGraph(ofs, nb_results);
         ofs.close();
     }
-}
-
-template <typename ID>
-size_t LinearSpace<ID>::Size() const {
-    return ids_.size();
-}
-
-template <typename ID>
-void LinearSpace<ID>::Info(FILE* log, size_t indent, size_t indent_incr) const {
-    const char* zero = string(indent, ' ').c_str();
-    fprintf(log, "%sitems: %zu\n", zero, ids_.size());
 }

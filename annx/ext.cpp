@@ -1023,7 +1023,7 @@ struct __pyx_obj_4annx_3ext_Indexer {
 };
 
 
-/* "annx/ext.pyx":70
+/* "annx/ext.pyx":78
  * 
  * 
  * cdef class LSHIndexer(Indexer):             # <<<<<<<<<<<<<<
@@ -1062,7 +1062,7 @@ struct __pyx_vtabstruct_4annx_3ext_Indexer {
 static struct __pyx_vtabstruct_4annx_3ext_Indexer *__pyx_vtabptr_4annx_3ext_Indexer;
 
 
-/* "annx/ext.pyx":70
+/* "annx/ext.pyx":78
  * 
  * 
  * cdef class LSHIndexer(Indexer):             # <<<<<<<<<<<<<<
@@ -1634,12 +1634,11 @@ static PyObject *__pyx_pf_4annx_3ext_7Indexer_4size(struct __pyx_obj_4annx_3ext_
 static PyObject *__pyx_pf_4annx_3ext_7Indexer_6upsert(struct __pyx_obj_4annx_3ext_Indexer *__pyx_v_self, uint64_t __pyx_v_id, PyArrayObject *__pyx_v_vec); /* proto */
 static PyObject *__pyx_pf_4annx_3ext_7Indexer_8query_id(struct __pyx_obj_4annx_3ext_Indexer *__pyx_v_self, uint64_t __pyx_v_id, uint32_t __pyx_v_n_neighbors); /* proto */
 static PyObject *__pyx_pf_4annx_3ext_7Indexer_10query_point(struct __pyx_obj_4annx_3ext_Indexer *__pyx_v_self, PyArrayObject *__pyx_v_vec, uint32_t __pyx_v_n_neighbors); /* proto */
+static PyObject *__pyx_pf_4annx_3ext_7Indexer_12make_graph(struct __pyx_obj_4annx_3ext_Indexer *__pyx_v_self, PyObject *__pyx_v_output, uint32_t __pyx_v_nb_neighbors); /* proto */
 static int __pyx_pf_4annx_3ext_10LSHIndexer___cinit__(struct __pyx_obj_4annx_3ext_LSHIndexer *__pyx_v_self, uint32_t __pyx_v_rank, uint32_t __pyx_v_L, uint32_t __pyx_v_k, float __pyx_v_w, uint32_t __pyx_v_search_k, uint64_t __pyx_v_seed); /* proto */
 static void __pyx_pf_4annx_3ext_10LSHIndexer_2__dealloc__(struct __pyx_obj_4annx_3ext_LSHIndexer *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_4annx_3ext_10LSHIndexer_4make_graph(struct __pyx_obj_4annx_3ext_LSHIndexer *__pyx_v_self, PyObject *__pyx_v_output, uint32_t __pyx_v_nb_neighbors); /* proto */
 static int __pyx_pf_4annx_3ext_13LinearIndexer___cinit__(struct __pyx_obj_4annx_3ext_LinearIndexer *__pyx_v_self, uint32_t __pyx_v_rank); /* proto */
 static void __pyx_pf_4annx_3ext_13LinearIndexer_2__dealloc__(struct __pyx_obj_4annx_3ext_LinearIndexer *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_4annx_3ext_13LinearIndexer_4make_graph(struct __pyx_obj_4annx_3ext_LinearIndexer *__pyx_v_self, PyObject *__pyx_v_output, uint32_t __pyx_v_nb_neighbors); /* proto */
 static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info, int __pyx_v_flags); /* proto */
 static void __pyx_pf_5numpy_7ndarray_2__releasebuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info); /* proto */
 static PyObject *__pyx_tp_new_4annx_3ext_Indexer(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
@@ -1655,7 +1654,6 @@ static PyObject *__pyx_tuple__7;
 static PyObject *__pyx_tuple__8;
 static PyObject *__pyx_tuple__9;
 static PyObject *__pyx_tuple__10;
-static PyObject *__pyx_tuple__11;
 
 /* "annx/ext.pyx":27
  *     cdef uint32_t _rank
@@ -2489,7 +2487,7 @@ static PyObject *__pyx_pf_4annx_3ext_7Indexer_10query_point(struct __pyx_obj_4an
  *         self._indexer.GetNeighborsByPt(<const float*>vec.data, n_neighbors, results)
  *         return self._query_result(results)             # <<<<<<<<<<<<<<
  * 
- * 
+ *     def make_graph(self, output, uint32_t nb_neighbors=10):
  */
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = ((struct __pyx_vtabstruct_4annx_3ext_Indexer *)__pyx_v_self->__pyx_vtab)->_query_result(__pyx_v_self, __pyx_v_results); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 67, __pyx_L1_error)
@@ -2526,7 +2524,180 @@ static PyObject *__pyx_pf_4annx_3ext_7Indexer_10query_point(struct __pyx_obj_4an
   return __pyx_r;
 }
 
-/* "annx/ext.pyx":72
+/* "annx/ext.pyx":69
+ *         return self._query_result(results)
+ * 
+ *     def make_graph(self, output, uint32_t nb_neighbors=10):             # <<<<<<<<<<<<<<
+ *         cdef string path
+ *         if isinstance(output, basestring):
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_4annx_3ext_7Indexer_13make_graph(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_4annx_3ext_7Indexer_13make_graph(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  PyObject *__pyx_v_output = 0;
+  uint32_t __pyx_v_nb_neighbors;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("make_graph (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_output,&__pyx_n_s_nb_neighbors,0};
+    PyObject* values[2] = {0,0};
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_output)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        case  1:
+        if (kw_args > 0) {
+          PyObject* value = PyDict_GetItem(__pyx_kwds, __pyx_n_s_nb_neighbors);
+          if (value) { values[1] = value; kw_args--; }
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "make_graph") < 0)) __PYX_ERR(0, 69, __pyx_L3_error)
+      }
+    } else {
+      switch (PyTuple_GET_SIZE(__pyx_args)) {
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+    }
+    __pyx_v_output = values[0];
+    if (values[1]) {
+      __pyx_v_nb_neighbors = __Pyx_PyInt_As_uint32_t(values[1]); if (unlikely((__pyx_v_nb_neighbors == ((uint32_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 69, __pyx_L3_error)
+    } else {
+      __pyx_v_nb_neighbors = ((uint32_t)10);
+    }
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("make_graph", 0, 1, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 69, __pyx_L3_error)
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("annx.ext.Indexer.make_graph", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_4annx_3ext_7Indexer_12make_graph(((struct __pyx_obj_4annx_3ext_Indexer *)__pyx_v_self), __pyx_v_output, __pyx_v_nb_neighbors);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_4annx_3ext_7Indexer_12make_graph(struct __pyx_obj_4annx_3ext_Indexer *__pyx_v_self, PyObject *__pyx_v_output, uint32_t __pyx_v_nb_neighbors) {
+  std::string __pyx_v_path;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  int __pyx_t_2;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  std::string __pyx_t_5;
+  __Pyx_RefNannySetupContext("make_graph", 0);
+
+  /* "annx/ext.pyx":71
+ *     def make_graph(self, output, uint32_t nb_neighbors=10):
+ *         cdef string path
+ *         if isinstance(output, basestring):             # <<<<<<<<<<<<<<
+ *             path = output.encode("utf-8")
+ *             self._indexer.MakeGraph(path, nb_neighbors)
+ */
+  __pyx_t_1 = __Pyx_PyBaseString_Check(__pyx_v_output); 
+  __pyx_t_2 = (__pyx_t_1 != 0);
+  if (__pyx_t_2) {
+
+    /* "annx/ext.pyx":72
+ *         cdef string path
+ *         if isinstance(output, basestring):
+ *             path = output.encode("utf-8")             # <<<<<<<<<<<<<<
+ *             self._indexer.MakeGraph(path, nb_neighbors)
+ *         else:
+ */
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_output, __pyx_n_s_encode); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 72, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_tuple_, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 72, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_4);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_t_5 = __pyx_convert_string_from_py_std__in_string(__pyx_t_4); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 72, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __pyx_v_path = __pyx_t_5;
+
+    /* "annx/ext.pyx":73
+ *         if isinstance(output, basestring):
+ *             path = output.encode("utf-8")
+ *             self._indexer.MakeGraph(path, nb_neighbors)             # <<<<<<<<<<<<<<
+ *         else:
+ *             raise TypeError(output)
+ */
+    __pyx_v_self->_indexer->MakeGraph(__pyx_v_path, __pyx_v_nb_neighbors);
+
+    /* "annx/ext.pyx":71
+ *     def make_graph(self, output, uint32_t nb_neighbors=10):
+ *         cdef string path
+ *         if isinstance(output, basestring):             # <<<<<<<<<<<<<<
+ *             path = output.encode("utf-8")
+ *             self._indexer.MakeGraph(path, nb_neighbors)
+ */
+    goto __pyx_L3;
+  }
+
+  /* "annx/ext.pyx":75
+ *             self._indexer.MakeGraph(path, nb_neighbors)
+ *         else:
+ *             raise TypeError(output)             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  /*else*/ {
+    __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 75, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_4);
+    __Pyx_INCREF(__pyx_v_output);
+    __Pyx_GIVEREF(__pyx_v_output);
+    PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_v_output);
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 75, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __Pyx_Raise(__pyx_t_3, 0, 0, 0);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __PYX_ERR(0, 75, __pyx_L1_error)
+  }
+  __pyx_L3:;
+
+  /* "annx/ext.pyx":69
+ *         return self._query_result(results)
+ * 
+ *     def make_graph(self, output, uint32_t nb_neighbors=10):             # <<<<<<<<<<<<<<
+ *         cdef string path
+ *         if isinstance(output, basestring):
+ */
+
+  /* function exit code */
+  __pyx_r = Py_None; __Pyx_INCREF(Py_None);
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_AddTraceback("annx.ext.Indexer.make_graph", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "annx/ext.pyx":80
  * cdef class LSHIndexer(Indexer):
  * 
  *     def __cinit__(self, uint32_t rank, uint32_t L=15, uint32_t k=32, float w=0.5, uint32_t search_k=0, uint64_t seed=0):             # <<<<<<<<<<<<<<
@@ -2594,7 +2765,7 @@ static int __pyx_pw_4annx_3ext_10LSHIndexer_1__cinit__(PyObject *__pyx_v_self, P
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__cinit__") < 0)) __PYX_ERR(0, 72, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__cinit__") < 0)) __PYX_ERR(0, 80, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -2608,36 +2779,36 @@ static int __pyx_pw_4annx_3ext_10LSHIndexer_1__cinit__(PyObject *__pyx_v_self, P
         default: goto __pyx_L5_argtuple_error;
       }
     }
-    __pyx_v_rank = __Pyx_PyInt_As_uint32_t(values[0]); if (unlikely((__pyx_v_rank == ((uint32_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 72, __pyx_L3_error)
+    __pyx_v_rank = __Pyx_PyInt_As_uint32_t(values[0]); if (unlikely((__pyx_v_rank == ((uint32_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 80, __pyx_L3_error)
     if (values[1]) {
-      __pyx_v_L = __Pyx_PyInt_As_uint32_t(values[1]); if (unlikely((__pyx_v_L == ((uint32_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 72, __pyx_L3_error)
+      __pyx_v_L = __Pyx_PyInt_As_uint32_t(values[1]); if (unlikely((__pyx_v_L == ((uint32_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 80, __pyx_L3_error)
     } else {
       __pyx_v_L = ((uint32_t)15);
     }
     if (values[2]) {
-      __pyx_v_k = __Pyx_PyInt_As_uint32_t(values[2]); if (unlikely((__pyx_v_k == ((uint32_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 72, __pyx_L3_error)
+      __pyx_v_k = __Pyx_PyInt_As_uint32_t(values[2]); if (unlikely((__pyx_v_k == ((uint32_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 80, __pyx_L3_error)
     } else {
       __pyx_v_k = ((uint32_t)32);
     }
     if (values[3]) {
-      __pyx_v_w = __pyx_PyFloat_AsFloat(values[3]); if (unlikely((__pyx_v_w == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 72, __pyx_L3_error)
+      __pyx_v_w = __pyx_PyFloat_AsFloat(values[3]); if (unlikely((__pyx_v_w == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 80, __pyx_L3_error)
     } else {
       __pyx_v_w = ((float)0.5);
     }
     if (values[4]) {
-      __pyx_v_search_k = __Pyx_PyInt_As_uint32_t(values[4]); if (unlikely((__pyx_v_search_k == ((uint32_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 72, __pyx_L3_error)
+      __pyx_v_search_k = __Pyx_PyInt_As_uint32_t(values[4]); if (unlikely((__pyx_v_search_k == ((uint32_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 80, __pyx_L3_error)
     } else {
       __pyx_v_search_k = ((uint32_t)0);
     }
     if (values[5]) {
-      __pyx_v_seed = __Pyx_PyInt_As_uint64_t(values[5]); if (unlikely((__pyx_v_seed == ((uint64_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 72, __pyx_L3_error)
+      __pyx_v_seed = __Pyx_PyInt_As_uint64_t(values[5]); if (unlikely((__pyx_v_seed == ((uint64_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 80, __pyx_L3_error)
     } else {
       __pyx_v_seed = ((uint64_t)0);
     }
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__cinit__", 0, 1, 6, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 72, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("__cinit__", 0, 1, 6, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 80, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("annx.ext.LSHIndexer.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -2655,7 +2826,7 @@ static int __pyx_pf_4annx_3ext_10LSHIndexer___cinit__(struct __pyx_obj_4annx_3ex
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__cinit__", 0);
 
-  /* "annx/ext.pyx":73
+  /* "annx/ext.pyx":81
  * 
  *     def __cinit__(self, uint32_t rank, uint32_t L=15, uint32_t k=32, float w=0.5, uint32_t search_k=0, uint64_t seed=0):
  *         self._indexer = new LSHSpace[uint64_t](seed)             # <<<<<<<<<<<<<<
@@ -2664,7 +2835,7 @@ static int __pyx_pf_4annx_3ext_10LSHIndexer___cinit__(struct __pyx_obj_4annx_3ex
  */
   __pyx_v_self->__pyx_base._indexer = new LSHSpace<uint64_t> (__pyx_v_seed);
 
-  /* "annx/ext.pyx":74
+  /* "annx/ext.pyx":82
  *     def __cinit__(self, uint32_t rank, uint32_t L=15, uint32_t k=32, float w=0.5, uint32_t search_k=0, uint64_t seed=0):
  *         self._indexer = new LSHSpace[uint64_t](seed)
  *         (<LSHSpace[uint64_t] *>self._indexer).Config(rank, L, k, w, search_k)             # <<<<<<<<<<<<<<
@@ -2673,7 +2844,7 @@ static int __pyx_pf_4annx_3ext_10LSHIndexer___cinit__(struct __pyx_obj_4annx_3ex
  */
   ((LSHSpace<uint64_t>  *)__pyx_v_self->__pyx_base._indexer)->Config(__pyx_v_rank, __pyx_v_L, __pyx_v_k, __pyx_v_w, __pyx_v_search_k);
 
-  /* "annx/ext.pyx":75
+  /* "annx/ext.pyx":83
  *         self._indexer = new LSHSpace[uint64_t](seed)
  *         (<LSHSpace[uint64_t] *>self._indexer).Config(rank, L, k, w, search_k)
  *         self._rank = rank             # <<<<<<<<<<<<<<
@@ -2682,7 +2853,7 @@ static int __pyx_pf_4annx_3ext_10LSHIndexer___cinit__(struct __pyx_obj_4annx_3ex
  */
   __pyx_v_self->__pyx_base._rank = __pyx_v_rank;
 
-  /* "annx/ext.pyx":72
+  /* "annx/ext.pyx":80
  * cdef class LSHIndexer(Indexer):
  * 
  *     def __cinit__(self, uint32_t rank, uint32_t L=15, uint32_t k=32, float w=0.5, uint32_t search_k=0, uint64_t seed=0):             # <<<<<<<<<<<<<<
@@ -2696,7 +2867,7 @@ static int __pyx_pf_4annx_3ext_10LSHIndexer___cinit__(struct __pyx_obj_4annx_3ex
   return __pyx_r;
 }
 
-/* "annx/ext.pyx":77
+/* "annx/ext.pyx":85
  *         self._rank = rank
  * 
  *     def __dealloc__(self):             # <<<<<<<<<<<<<<
@@ -2719,16 +2890,16 @@ static void __pyx_pf_4annx_3ext_10LSHIndexer_2__dealloc__(struct __pyx_obj_4annx
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__dealloc__", 0);
 
-  /* "annx/ext.pyx":78
+  /* "annx/ext.pyx":86
  * 
  *     def __dealloc__(self):
  *         del self._indexer             # <<<<<<<<<<<<<<
  * 
- *     def make_graph(self, output, uint32_t nb_neighbors=10):
+ * 
  */
   delete __pyx_v_self->__pyx_base._indexer;
 
-  /* "annx/ext.pyx":77
+  /* "annx/ext.pyx":85
  *         self._rank = rank
  * 
  *     def __dealloc__(self):             # <<<<<<<<<<<<<<
@@ -2738,179 +2909,6 @@ static void __pyx_pf_4annx_3ext_10LSHIndexer_2__dealloc__(struct __pyx_obj_4annx
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
-}
-
-/* "annx/ext.pyx":80
- *         del self._indexer
- * 
- *     def make_graph(self, output, uint32_t nb_neighbors=10):             # <<<<<<<<<<<<<<
- *         cdef string path
- *         if isinstance(output, basestring):
- */
-
-/* Python wrapper */
-static PyObject *__pyx_pw_4annx_3ext_10LSHIndexer_5make_graph(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_pw_4annx_3ext_10LSHIndexer_5make_graph(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
-  PyObject *__pyx_v_output = 0;
-  uint32_t __pyx_v_nb_neighbors;
-  PyObject *__pyx_r = 0;
-  __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("make_graph (wrapper)", 0);
-  {
-    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_output,&__pyx_n_s_nb_neighbors,0};
-    PyObject* values[2] = {0,0};
-    if (unlikely(__pyx_kwds)) {
-      Py_ssize_t kw_args;
-      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
-      switch (pos_args) {
-        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
-        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
-        case  0: break;
-        default: goto __pyx_L5_argtuple_error;
-      }
-      kw_args = PyDict_Size(__pyx_kwds);
-      switch (pos_args) {
-        case  0:
-        if (likely((values[0] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_output)) != 0)) kw_args--;
-        else goto __pyx_L5_argtuple_error;
-        case  1:
-        if (kw_args > 0) {
-          PyObject* value = PyDict_GetItem(__pyx_kwds, __pyx_n_s_nb_neighbors);
-          if (value) { values[1] = value; kw_args--; }
-        }
-      }
-      if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "make_graph") < 0)) __PYX_ERR(0, 80, __pyx_L3_error)
-      }
-    } else {
-      switch (PyTuple_GET_SIZE(__pyx_args)) {
-        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
-        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
-        break;
-        default: goto __pyx_L5_argtuple_error;
-      }
-    }
-    __pyx_v_output = values[0];
-    if (values[1]) {
-      __pyx_v_nb_neighbors = __Pyx_PyInt_As_uint32_t(values[1]); if (unlikely((__pyx_v_nb_neighbors == ((uint32_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 80, __pyx_L3_error)
-    } else {
-      __pyx_v_nb_neighbors = ((uint32_t)10);
-    }
-  }
-  goto __pyx_L4_argument_unpacking_done;
-  __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("make_graph", 0, 1, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 80, __pyx_L3_error)
-  __pyx_L3_error:;
-  __Pyx_AddTraceback("annx.ext.LSHIndexer.make_graph", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __Pyx_RefNannyFinishContext();
-  return NULL;
-  __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_4annx_3ext_10LSHIndexer_4make_graph(((struct __pyx_obj_4annx_3ext_LSHIndexer *)__pyx_v_self), __pyx_v_output, __pyx_v_nb_neighbors);
-
-  /* function exit code */
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-static PyObject *__pyx_pf_4annx_3ext_10LSHIndexer_4make_graph(struct __pyx_obj_4annx_3ext_LSHIndexer *__pyx_v_self, PyObject *__pyx_v_output, uint32_t __pyx_v_nb_neighbors) {
-  std::string __pyx_v_path;
-  PyObject *__pyx_r = NULL;
-  __Pyx_RefNannyDeclarations
-  int __pyx_t_1;
-  int __pyx_t_2;
-  PyObject *__pyx_t_3 = NULL;
-  PyObject *__pyx_t_4 = NULL;
-  std::string __pyx_t_5;
-  __Pyx_RefNannySetupContext("make_graph", 0);
-
-  /* "annx/ext.pyx":82
- *     def make_graph(self, output, uint32_t nb_neighbors=10):
- *         cdef string path
- *         if isinstance(output, basestring):             # <<<<<<<<<<<<<<
- *             path = output.encode("utf-8")
- *             (<LSHSpace[uint64_t] *>self._indexer).MakeGraph(path, nb_neighbors)
- */
-  __pyx_t_1 = __Pyx_PyBaseString_Check(__pyx_v_output); 
-  __pyx_t_2 = (__pyx_t_1 != 0);
-  if (__pyx_t_2) {
-
-    /* "annx/ext.pyx":83
- *         cdef string path
- *         if isinstance(output, basestring):
- *             path = output.encode("utf-8")             # <<<<<<<<<<<<<<
- *             (<LSHSpace[uint64_t] *>self._indexer).MakeGraph(path, nb_neighbors)
- *         else:
- */
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_output, __pyx_n_s_encode); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 83, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_tuple_, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 83, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_5 = __pyx_convert_string_from_py_std__in_string(__pyx_t_4); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 83, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_v_path = __pyx_t_5;
-
-    /* "annx/ext.pyx":84
- *         if isinstance(output, basestring):
- *             path = output.encode("utf-8")
- *             (<LSHSpace[uint64_t] *>self._indexer).MakeGraph(path, nb_neighbors)             # <<<<<<<<<<<<<<
- *         else:
- *             raise TypeError(output)
- */
-    ((LSHSpace<uint64_t>  *)__pyx_v_self->__pyx_base._indexer)->MakeGraph(__pyx_v_path, __pyx_v_nb_neighbors);
-
-    /* "annx/ext.pyx":82
- *     def make_graph(self, output, uint32_t nb_neighbors=10):
- *         cdef string path
- *         if isinstance(output, basestring):             # <<<<<<<<<<<<<<
- *             path = output.encode("utf-8")
- *             (<LSHSpace[uint64_t] *>self._indexer).MakeGraph(path, nb_neighbors)
- */
-    goto __pyx_L3;
-  }
-
-  /* "annx/ext.pyx":86
- *             (<LSHSpace[uint64_t] *>self._indexer).MakeGraph(path, nb_neighbors)
- *         else:
- *             raise TypeError(output)             # <<<<<<<<<<<<<<
- * 
- * 
- */
-  /*else*/ {
-    __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 86, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_INCREF(__pyx_v_output);
-    __Pyx_GIVEREF(__pyx_v_output);
-    PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_v_output);
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 86, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __Pyx_Raise(__pyx_t_3, 0, 0, 0);
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __PYX_ERR(0, 86, __pyx_L1_error)
-  }
-  __pyx_L3:;
-
-  /* "annx/ext.pyx":80
- *         del self._indexer
- * 
- *     def make_graph(self, output, uint32_t nb_neighbors=10):             # <<<<<<<<<<<<<<
- *         cdef string path
- *         if isinstance(output, basestring):
- */
-
-  /* function exit code */
-  __pyx_r = Py_None; __Pyx_INCREF(Py_None);
-  goto __pyx_L0;
-  __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_3);
-  __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_AddTraceback("annx.ext.LSHIndexer.make_graph", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = NULL;
-  __pyx_L0:;
-  __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
 }
 
 /* "annx/ext.pyx":91
@@ -3021,7 +3019,6 @@ static int __pyx_pf_4annx_3ext_13LinearIndexer___cinit__(struct __pyx_obj_4annx_
  * 
  *     def __dealloc__(self):             # <<<<<<<<<<<<<<
  *         del self._indexer
- * 
  */
 
 /* Python wrapper */
@@ -3043,8 +3040,6 @@ static void __pyx_pf_4annx_3ext_13LinearIndexer_2__dealloc__(struct __pyx_obj_4a
  * 
  *     def __dealloc__(self):
  *         del self._indexer             # <<<<<<<<<<<<<<
- * 
- *     def make_graph(self, output, uint32_t nb_neighbors=10):
  */
   delete __pyx_v_self->__pyx_base._indexer;
 
@@ -3053,182 +3048,10 @@ static void __pyx_pf_4annx_3ext_13LinearIndexer_2__dealloc__(struct __pyx_obj_4a
  * 
  *     def __dealloc__(self):             # <<<<<<<<<<<<<<
  *         del self._indexer
- * 
  */
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
-}
-
-/* "annx/ext.pyx":99
- *         del self._indexer
- * 
- *     def make_graph(self, output, uint32_t nb_neighbors=10):             # <<<<<<<<<<<<<<
- *         cdef string path
- *         if isinstance(output, basestring):
- */
-
-/* Python wrapper */
-static PyObject *__pyx_pw_4annx_3ext_13LinearIndexer_5make_graph(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_pw_4annx_3ext_13LinearIndexer_5make_graph(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
-  PyObject *__pyx_v_output = 0;
-  uint32_t __pyx_v_nb_neighbors;
-  PyObject *__pyx_r = 0;
-  __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("make_graph (wrapper)", 0);
-  {
-    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_output,&__pyx_n_s_nb_neighbors,0};
-    PyObject* values[2] = {0,0};
-    if (unlikely(__pyx_kwds)) {
-      Py_ssize_t kw_args;
-      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
-      switch (pos_args) {
-        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
-        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
-        case  0: break;
-        default: goto __pyx_L5_argtuple_error;
-      }
-      kw_args = PyDict_Size(__pyx_kwds);
-      switch (pos_args) {
-        case  0:
-        if (likely((values[0] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_output)) != 0)) kw_args--;
-        else goto __pyx_L5_argtuple_error;
-        case  1:
-        if (kw_args > 0) {
-          PyObject* value = PyDict_GetItem(__pyx_kwds, __pyx_n_s_nb_neighbors);
-          if (value) { values[1] = value; kw_args--; }
-        }
-      }
-      if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "make_graph") < 0)) __PYX_ERR(0, 99, __pyx_L3_error)
-      }
-    } else {
-      switch (PyTuple_GET_SIZE(__pyx_args)) {
-        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
-        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
-        break;
-        default: goto __pyx_L5_argtuple_error;
-      }
-    }
-    __pyx_v_output = values[0];
-    if (values[1]) {
-      __pyx_v_nb_neighbors = __Pyx_PyInt_As_uint32_t(values[1]); if (unlikely((__pyx_v_nb_neighbors == ((uint32_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 99, __pyx_L3_error)
-    } else {
-      __pyx_v_nb_neighbors = ((uint32_t)10);
-    }
-  }
-  goto __pyx_L4_argument_unpacking_done;
-  __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("make_graph", 0, 1, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 99, __pyx_L3_error)
-  __pyx_L3_error:;
-  __Pyx_AddTraceback("annx.ext.LinearIndexer.make_graph", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __Pyx_RefNannyFinishContext();
-  return NULL;
-  __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_4annx_3ext_13LinearIndexer_4make_graph(((struct __pyx_obj_4annx_3ext_LinearIndexer *)__pyx_v_self), __pyx_v_output, __pyx_v_nb_neighbors);
-
-  /* function exit code */
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
-}
-
-static PyObject *__pyx_pf_4annx_3ext_13LinearIndexer_4make_graph(struct __pyx_obj_4annx_3ext_LinearIndexer *__pyx_v_self, PyObject *__pyx_v_output, uint32_t __pyx_v_nb_neighbors) {
-  std::string __pyx_v_path;
-  PyObject *__pyx_r = NULL;
-  __Pyx_RefNannyDeclarations
-  int __pyx_t_1;
-  int __pyx_t_2;
-  PyObject *__pyx_t_3 = NULL;
-  PyObject *__pyx_t_4 = NULL;
-  std::string __pyx_t_5;
-  __Pyx_RefNannySetupContext("make_graph", 0);
-
-  /* "annx/ext.pyx":101
- *     def make_graph(self, output, uint32_t nb_neighbors=10):
- *         cdef string path
- *         if isinstance(output, basestring):             # <<<<<<<<<<<<<<
- *             path = output.encode("utf-8")
- *             (<LSHSpace[uint64_t] *>self._indexer).MakeGraph(path, nb_neighbors)
- */
-  __pyx_t_1 = __Pyx_PyBaseString_Check(__pyx_v_output); 
-  __pyx_t_2 = (__pyx_t_1 != 0);
-  if (__pyx_t_2) {
-
-    /* "annx/ext.pyx":102
- *         cdef string path
- *         if isinstance(output, basestring):
- *             path = output.encode("utf-8")             # <<<<<<<<<<<<<<
- *             (<LSHSpace[uint64_t] *>self._indexer).MakeGraph(path, nb_neighbors)
- *         else:
- */
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_output, __pyx_n_s_encode); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 102, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 102, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __pyx_t_5 = __pyx_convert_string_from_py_std__in_string(__pyx_t_4); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 102, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_v_path = __pyx_t_5;
-
-    /* "annx/ext.pyx":103
- *         if isinstance(output, basestring):
- *             path = output.encode("utf-8")
- *             (<LSHSpace[uint64_t] *>self._indexer).MakeGraph(path, nb_neighbors)             # <<<<<<<<<<<<<<
- *         else:
- *             raise TypeError(output)
- */
-    ((LSHSpace<uint64_t>  *)__pyx_v_self->__pyx_base._indexer)->MakeGraph(__pyx_v_path, __pyx_v_nb_neighbors);
-
-    /* "annx/ext.pyx":101
- *     def make_graph(self, output, uint32_t nb_neighbors=10):
- *         cdef string path
- *         if isinstance(output, basestring):             # <<<<<<<<<<<<<<
- *             path = output.encode("utf-8")
- *             (<LSHSpace[uint64_t] *>self._indexer).MakeGraph(path, nb_neighbors)
- */
-    goto __pyx_L3;
-  }
-
-  /* "annx/ext.pyx":105
- *             (<LSHSpace[uint64_t] *>self._indexer).MakeGraph(path, nb_neighbors)
- *         else:
- *             raise TypeError(output)             # <<<<<<<<<<<<<<
- */
-  /*else*/ {
-    __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 105, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_4);
-    __Pyx_INCREF(__pyx_v_output);
-    __Pyx_GIVEREF(__pyx_v_output);
-    PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_v_output);
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_t_4, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 105, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __Pyx_Raise(__pyx_t_3, 0, 0, 0);
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __PYX_ERR(0, 105, __pyx_L1_error)
-  }
-  __pyx_L3:;
-
-  /* "annx/ext.pyx":99
- *         del self._indexer
- * 
- *     def make_graph(self, output, uint32_t nb_neighbors=10):             # <<<<<<<<<<<<<<
- *         cdef string path
- *         if isinstance(output, basestring):
- */
-
-  /* function exit code */
-  __pyx_r = Py_None; __Pyx_INCREF(Py_None);
-  goto __pyx_L0;
-  __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_3);
-  __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_AddTraceback("annx.ext.LinearIndexer.make_graph", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = NULL;
-  __pyx_L0:;
-  __Pyx_XGIVEREF(__pyx_r);
-  __Pyx_RefNannyFinishContext();
-  return __pyx_r;
 }
 
 /* "env/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":197
@@ -3400,7 +3223,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  * 
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 218, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 218, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -3456,7 +3279,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  * 
  *             info.buf = PyArray_DATA(self)
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 222, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 222, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_Raise(__pyx_t_3, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -3765,7 +3588,7 @@ static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, P
  *                 if   t == NPY_BYTE:        f = "b"
  *                 elif t == NPY_UBYTE:       f = "B"
  */
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__5, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 259, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 259, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_Raise(__pyx_t_3, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -4580,7 +4403,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  * 
  *         if ((child.byteorder == c'>' and little_endian) or
  */
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 799, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__5, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 799, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_Raise(__pyx_t_3, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -4648,7 +4471,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  *             # One could encode it in the format string and have Cython
  *             # complain instead, BUT: < and > in format strings also imply
  */
-      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__7, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 803, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__6, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 803, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_Raise(__pyx_t_3, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -4757,7 +4580,7 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *__pyx
  * 
  *             # Until ticket #99 is fixed, use integers to avoid warnings
  */
-        __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__8, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 823, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_RuntimeError, __pyx_tuple__7, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 823, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         __Pyx_Raise(__pyx_t_4, 0, 0, 0);
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
@@ -5438,7 +5261,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_array(void) {
  * 
  * cdef inline int import_umath() except -1:
  */
-      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 989, __pyx_L5_except_error)
+      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__8, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 989, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_Raise(__pyx_t_8, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
@@ -5569,7 +5392,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_umath(void) {
  * 
  * cdef inline int import_ufunc() except -1:
  */
-      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__10, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 995, __pyx_L5_except_error)
+      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__9, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 995, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_Raise(__pyx_t_8, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
@@ -5697,7 +5520,7 @@ static CYTHON_INLINE int __pyx_f_5numpy_import_ufunc(void) {
  *     except Exception:
  *         raise ImportError("numpy.core.umath failed to import")             # <<<<<<<<<<<<<<
  */
-      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__11, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 1001, __pyx_L5_except_error)
+      __pyx_t_8 = __Pyx_PyObject_Call(__pyx_builtin_ImportError, __pyx_tuple__10, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 1001, __pyx_L5_except_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_Raise(__pyx_t_8, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
@@ -5828,6 +5651,7 @@ static PyMethodDef __pyx_methods_4annx_3ext_Indexer[] = {
   {"upsert", (PyCFunction)__pyx_pw_4annx_3ext_7Indexer_7upsert, METH_VARARGS|METH_KEYWORDS, 0},
   {"query_id", (PyCFunction)__pyx_pw_4annx_3ext_7Indexer_9query_id, METH_VARARGS|METH_KEYWORDS, 0},
   {"query_point", (PyCFunction)__pyx_pw_4annx_3ext_7Indexer_11query_point, METH_VARARGS|METH_KEYWORDS, 0},
+  {"make_graph", (PyCFunction)__pyx_pw_4annx_3ext_7Indexer_13make_graph, METH_VARARGS|METH_KEYWORDS, 0},
   {0, 0, 0, 0}
 };
 
@@ -5921,7 +5745,6 @@ static void __pyx_tp_dealloc_4annx_3ext_LSHIndexer(PyObject *o) {
 }
 
 static PyMethodDef __pyx_methods_4annx_3ext_LSHIndexer[] = {
-  {"make_graph", (PyCFunction)__pyx_pw_4annx_3ext_10LSHIndexer_5make_graph, METH_VARARGS|METH_KEYWORDS, 0},
   {0, 0, 0, 0}
 };
 
@@ -6015,7 +5838,6 @@ static void __pyx_tp_dealloc_4annx_3ext_LinearIndexer(PyObject *o) {
 }
 
 static PyMethodDef __pyx_methods_4annx_3ext_LinearIndexer[] = {
-  {"make_graph", (PyCFunction)__pyx_pw_4annx_3ext_13LinearIndexer_5make_graph, METH_VARARGS|METH_KEYWORDS, 0},
   {0, 0, 0, 0}
 };
 
@@ -6143,7 +5965,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_TypeError = __Pyx_GetBuiltinName(__pyx_n_s_TypeError); if (!__pyx_builtin_TypeError) __PYX_ERR(0, 86, __pyx_L1_error)
+  __pyx_builtin_TypeError = __Pyx_GetBuiltinName(__pyx_n_s_TypeError); if (!__pyx_builtin_TypeError) __PYX_ERR(0, 75, __pyx_L1_error)
   __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(1, 218, __pyx_L1_error)
   __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(1, 231, __pyx_L1_error)
   __pyx_builtin_RuntimeError = __Pyx_GetBuiltinName(__pyx_n_s_RuntimeError); if (!__pyx_builtin_RuntimeError) __PYX_ERR(1, 799, __pyx_L1_error)
@@ -6157,27 +5979,16 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "annx/ext.pyx":83
+  /* "annx/ext.pyx":72
  *         cdef string path
  *         if isinstance(output, basestring):
  *             path = output.encode("utf-8")             # <<<<<<<<<<<<<<
- *             (<LSHSpace[uint64_t] *>self._indexer).MakeGraph(path, nb_neighbors)
+ *             self._indexer.MakeGraph(path, nb_neighbors)
  *         else:
  */
-  __pyx_tuple_ = PyTuple_Pack(1, __pyx_kp_s_utf_8); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 83, __pyx_L1_error)
+  __pyx_tuple_ = PyTuple_Pack(1, __pyx_kp_s_utf_8); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 72, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple_);
   __Pyx_GIVEREF(__pyx_tuple_);
-
-  /* "annx/ext.pyx":102
- *         cdef string path
- *         if isinstance(output, basestring):
- *             path = output.encode("utf-8")             # <<<<<<<<<<<<<<
- *             (<LSHSpace[uint64_t] *>self._indexer).MakeGraph(path, nb_neighbors)
- *         else:
- */
-  __pyx_tuple__2 = PyTuple_Pack(1, __pyx_kp_s_utf_8); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(0, 102, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__2);
-  __Pyx_GIVEREF(__pyx_tuple__2);
 
   /* "env/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":218
  *             if ((flags & pybuf.PyBUF_C_CONTIGUOUS == pybuf.PyBUF_C_CONTIGUOUS)
@@ -6186,9 +5997,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)
  */
-  __pyx_tuple__3 = PyTuple_Pack(1, __pyx_kp_u_ndarray_is_not_C_contiguous); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(1, 218, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__3);
-  __Pyx_GIVEREF(__pyx_tuple__3);
+  __pyx_tuple__2 = PyTuple_Pack(1, __pyx_kp_u_ndarray_is_not_C_contiguous); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(1, 218, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__2);
+  __Pyx_GIVEREF(__pyx_tuple__2);
 
   /* "env/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":222
  *             if ((flags & pybuf.PyBUF_F_CONTIGUOUS == pybuf.PyBUF_F_CONTIGUOUS)
@@ -6197,9 +6008,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *             info.buf = PyArray_DATA(self)
  */
-  __pyx_tuple__4 = PyTuple_Pack(1, __pyx_kp_u_ndarray_is_not_Fortran_contiguou); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(1, 222, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__4);
-  __Pyx_GIVEREF(__pyx_tuple__4);
+  __pyx_tuple__3 = PyTuple_Pack(1, __pyx_kp_u_ndarray_is_not_Fortran_contiguou); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(1, 222, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__3);
+  __Pyx_GIVEREF(__pyx_tuple__3);
 
   /* "env/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":259
  *                 if ((descr.byteorder == c'>' and little_endian) or
@@ -6208,9 +6019,9 @@ static int __Pyx_InitCachedConstants(void) {
  *                 if   t == NPY_BYTE:        f = "b"
  *                 elif t == NPY_UBYTE:       f = "B"
  */
-  __pyx_tuple__5 = PyTuple_Pack(1, __pyx_kp_u_Non_native_byte_order_not_suppor); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(1, 259, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__5);
-  __Pyx_GIVEREF(__pyx_tuple__5);
+  __pyx_tuple__4 = PyTuple_Pack(1, __pyx_kp_u_Non_native_byte_order_not_suppor); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(1, 259, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__4);
+  __Pyx_GIVEREF(__pyx_tuple__4);
 
   /* "env/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":799
  * 
@@ -6219,9 +6030,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *         if ((child.byteorder == c'>' and little_endian) or
  */
-  __pyx_tuple__6 = PyTuple_Pack(1, __pyx_kp_u_Format_string_allocated_too_shor); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(1, 799, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__6);
-  __Pyx_GIVEREF(__pyx_tuple__6);
+  __pyx_tuple__5 = PyTuple_Pack(1, __pyx_kp_u_Format_string_allocated_too_shor); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(1, 799, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__5);
+  __Pyx_GIVEREF(__pyx_tuple__5);
 
   /* "env/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":803
  *         if ((child.byteorder == c'>' and little_endian) or
@@ -6230,9 +6041,9 @@ static int __Pyx_InitCachedConstants(void) {
  *             # One could encode it in the format string and have Cython
  *             # complain instead, BUT: < and > in format strings also imply
  */
-  __pyx_tuple__7 = PyTuple_Pack(1, __pyx_kp_u_Non_native_byte_order_not_suppor); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(1, 803, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__7);
-  __Pyx_GIVEREF(__pyx_tuple__7);
+  __pyx_tuple__6 = PyTuple_Pack(1, __pyx_kp_u_Non_native_byte_order_not_suppor); if (unlikely(!__pyx_tuple__6)) __PYX_ERR(1, 803, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__6);
+  __Pyx_GIVEREF(__pyx_tuple__6);
 
   /* "env/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":823
  *             t = child.type_num
@@ -6241,9 +6052,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  *             # Until ticket #99 is fixed, use integers to avoid warnings
  */
-  __pyx_tuple__8 = PyTuple_Pack(1, __pyx_kp_u_Format_string_allocated_too_shor_2); if (unlikely(!__pyx_tuple__8)) __PYX_ERR(1, 823, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__8);
-  __Pyx_GIVEREF(__pyx_tuple__8);
+  __pyx_tuple__7 = PyTuple_Pack(1, __pyx_kp_u_Format_string_allocated_too_shor_2); if (unlikely(!__pyx_tuple__7)) __PYX_ERR(1, 823, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__7);
+  __Pyx_GIVEREF(__pyx_tuple__7);
 
   /* "env/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":989
  *         _import_array()
@@ -6252,9 +6063,9 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  * cdef inline int import_umath() except -1:
  */
-  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_kp_s_numpy_core_multiarray_failed_to); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(1, 989, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__9);
-  __Pyx_GIVEREF(__pyx_tuple__9);
+  __pyx_tuple__8 = PyTuple_Pack(1, __pyx_kp_s_numpy_core_multiarray_failed_to); if (unlikely(!__pyx_tuple__8)) __PYX_ERR(1, 989, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__8);
+  __Pyx_GIVEREF(__pyx_tuple__8);
 
   /* "env/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":995
  *         _import_umath()
@@ -6263,18 +6074,18 @@ static int __Pyx_InitCachedConstants(void) {
  * 
  * cdef inline int import_ufunc() except -1:
  */
-  __pyx_tuple__10 = PyTuple_Pack(1, __pyx_kp_s_numpy_core_umath_failed_to_impor); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(1, 995, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__10);
-  __Pyx_GIVEREF(__pyx_tuple__10);
+  __pyx_tuple__9 = PyTuple_Pack(1, __pyx_kp_s_numpy_core_umath_failed_to_impor); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(1, 995, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__9);
+  __Pyx_GIVEREF(__pyx_tuple__9);
 
   /* "env/lib/python2.7/site-packages/Cython/Includes/numpy/__init__.pxd":1001
  *         _import_umath()
  *     except Exception:
  *         raise ImportError("numpy.core.umath failed to import")             # <<<<<<<<<<<<<<
  */
-  __pyx_tuple__11 = PyTuple_Pack(1, __pyx_kp_s_numpy_core_umath_failed_to_impor); if (unlikely(!__pyx_tuple__11)) __PYX_ERR(1, 1001, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__11);
-  __Pyx_GIVEREF(__pyx_tuple__11);
+  __pyx_tuple__10 = PyTuple_Pack(1, __pyx_kp_s_numpy_core_umath_failed_to_impor); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(1, 1001, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__10);
+  __Pyx_GIVEREF(__pyx_tuple__10);
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -6384,10 +6195,10 @@ PyMODINIT_FUNC PyInit_ext(void)
   __pyx_vtabptr_4annx_3ext_LSHIndexer = &__pyx_vtable_4annx_3ext_LSHIndexer;
   __pyx_vtable_4annx_3ext_LSHIndexer.__pyx_base = *__pyx_vtabptr_4annx_3ext_Indexer;
   __pyx_type_4annx_3ext_LSHIndexer.tp_base = __pyx_ptype_4annx_3ext_Indexer;
-  if (PyType_Ready(&__pyx_type_4annx_3ext_LSHIndexer) < 0) __PYX_ERR(0, 70, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_4annx_3ext_LSHIndexer) < 0) __PYX_ERR(0, 78, __pyx_L1_error)
   __pyx_type_4annx_3ext_LSHIndexer.tp_print = 0;
-  if (__Pyx_SetVtable(__pyx_type_4annx_3ext_LSHIndexer.tp_dict, __pyx_vtabptr_4annx_3ext_LSHIndexer) < 0) __PYX_ERR(0, 70, __pyx_L1_error)
-  if (PyObject_SetAttrString(__pyx_m, "LSHIndexer", (PyObject *)&__pyx_type_4annx_3ext_LSHIndexer) < 0) __PYX_ERR(0, 70, __pyx_L1_error)
+  if (__Pyx_SetVtable(__pyx_type_4annx_3ext_LSHIndexer.tp_dict, __pyx_vtabptr_4annx_3ext_LSHIndexer) < 0) __PYX_ERR(0, 78, __pyx_L1_error)
+  if (PyObject_SetAttrString(__pyx_m, "LSHIndexer", (PyObject *)&__pyx_type_4annx_3ext_LSHIndexer) < 0) __PYX_ERR(0, 78, __pyx_L1_error)
   __pyx_ptype_4annx_3ext_LSHIndexer = &__pyx_type_4annx_3ext_LSHIndexer;
   __pyx_vtabptr_4annx_3ext_LinearIndexer = &__pyx_vtable_4annx_3ext_LinearIndexer;
   __pyx_vtable_4annx_3ext_LinearIndexer.__pyx_base = *__pyx_vtabptr_4annx_3ext_Indexer;

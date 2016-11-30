@@ -66,6 +66,14 @@ cdef class Indexer:
         self._indexer.GetNeighborsByPt(<const float*>vec.data, n_neighbors, results)
         return self._query_result(results)
 
+    def make_graph(self, output, uint32_t nb_neighbors=10):
+        cdef string path
+        if isinstance(output, basestring):
+            path = output.encode("utf-8")
+            self._indexer.GraphToPath(path, nb_neighbors)
+        else:
+            raise TypeError(output)
+
 
 cdef class LSHIndexer(Indexer):
 
@@ -77,14 +85,6 @@ cdef class LSHIndexer(Indexer):
     def __dealloc__(self):
         del self._indexer
 
-    def make_graph(self, output, uint32_t nb_neighbors=10):
-        cdef string path
-        if isinstance(output, basestring):
-            path = output.encode("utf-8")
-            (<LSHSpace[uint64_t] *>self._indexer).MakeGraph(path, nb_neighbors)
-        else:
-            raise TypeError(output)
-
 
 cdef class LinearIndexer(Indexer):
 
@@ -95,11 +95,3 @@ cdef class LinearIndexer(Indexer):
 
     def __dealloc__(self):
         del self._indexer
-
-    def make_graph(self, output, uint32_t nb_neighbors=10):
-        cdef string path
-        if isinstance(output, basestring):
-            path = output.encode("utf-8")
-            (<LSHSpace[uint64_t] *>self._indexer).MakeGraph(path, nb_neighbors)
-        else:
-            raise TypeError(output)

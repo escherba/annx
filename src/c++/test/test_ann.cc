@@ -24,7 +24,7 @@ TEST(ann_test, lsh)
     indexer.Init(10);
 
     std::vector<float> vec;
-    vec.reserve(10);
+    vec.reserve(indexer.Dim());
     RandomFill(vec.begin(), vec.end());
     SpaceInput<ID> input;
     input.id = 1;
@@ -44,7 +44,7 @@ TEST(ann_test, linear)
     indexer.Init(10);
 
     std::vector<float> vec;
-    vec.reserve(10);
+    vec.reserve(indexer.Dim());
     RandomFill(vec.begin(), vec.end());
     SpaceInput<ID> input;
     input.id = 1;

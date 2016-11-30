@@ -25,7 +25,7 @@ using std::multimap;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
-using ann::util::ProgBar;
+using ann::util::ProgressBar;
 
 namespace /**** begin namespace ****/
 {
@@ -74,15 +74,18 @@ class LSHSpace : public Space<ID> {
         void GetNeighbors(const ID& id, size_t nb_results,
                 vector<SpaceResult<ID>>& results) const override;
 
-        size_t Size() const override;
+        void GraphToStream(std::ostream& out, size_t nb_results) const override;
 
-        void Info(FILE* log, size_t indent=2, size_t indent_incr=4) const override;
+        // Get the number of elements stored.
+        size_t Size() const override { return ids_.size(); }
 
-        void MakeGraph(std::ostream& out, size_t nb_results) const;
-
-        void MakeGraph(const std::string& path, size_t nb_results) const;
+        // Get Dimensionality
+        size_t Dim() const override { return ndim_; }
 
     private:
+
+        size_t ndim_;
+        vector<ID> ids_;
 
         // Methods
         void _InitBuckets();
@@ -94,12 +97,9 @@ class LSHSpace : public Space<ID> {
         void GetNeighbors(const Eigen::VectorXf &vec, size_t nb_results,
             vector<SpaceResult<ID>>& results) const;
 
-        size_t nb_dims_;
-
         // dynamically allocated members
         // actual data stored
         unordered_map<ID, size_t> id2index_;
-        vector<ID> ids_;
         vector<Eigen::VectorXf> points_;
 
         // dynamically allocated members (2)
@@ -128,13 +128,13 @@ template <typename ID>
 void LSHSpace<ID>::Config(size_t nb_dims, size_t L, size_t k, float w, size_t search_k)
 {
     // create placeholders for random vectors
-    nb_dims_ = nb_dims;
+    ndim_ = nb_dims;
     L_ = L;
     k_ = k;
     w_ = w;
     search_k_ = search_k;
 
-    nb_dims_ = nb_dims;
+    ndim_ = nb_dims;
     _InitTables();
     _InitOffsets();
     _InitBuckets();
@@ -221,16 +221,16 @@ unsigned int LSHSpace<ID>::Upsert(const SpaceInput<ID>& input) {
     Delete(input.id);
 
     // Reject NaN entries.
-    if (!isfinite_xf(input.point, nb_dims_)) {
+    if (!isfinite_xf(input.point, ndim_)) {
         return 0;
     }
 
     std::vector<float> vec;
-    vec.reserve(nb_dims_);
-    for (size_t i = 0; i < nb_dims_; ++i) {
+    vec.reserve(ndim_);
+    for (size_t i = 0; i < ndim_; ++i) {
         vec.emplace_back(input.point[i]);
     }
-    auto evec = Eigen::Map<Eigen::VectorXf>(vec.data(), nb_dims_);
+    auto evec = Eigen::Map<Eigen::VectorXf>(vec.data(), ndim_);
 
     // Reject inputs whose norm equals zero
     if (evec.norm() == 0.0) {
@@ -311,12 +311,12 @@ void LSHSpace<ID>::GetNeighbors(const float* point, size_t nb_results,
         vector<SpaceResult<ID>>& results) const
 {
     std::vector<float> vec;
-    vec.reserve(nb_dims_);
-    for (size_t i = 0; i < nb_dims_; ++i) {
+    vec.reserve(ndim_);
+    for (size_t i = 0; i < ndim_; ++i) {
         vec.emplace_back(point[i]);
     }
 
-    auto evec = Eigen::Map<Eigen::VectorXf>(vec.data(), nb_dims_);
+    auto evec = Eigen::Map<Eigen::VectorXf>(vec.data(), ndim_);
     evec.normalize();
 
     GetNeighbors(evec, nb_results, results);
@@ -343,9 +343,9 @@ void LSHSpace<ID>::_InitTables() {
     tables_.clear();
     tables_.reserve(L_);
     for (size_t i=0; i < L_; ++i) {
-        std::vector<float> data(k_ * nb_dims_);
+        std::vector<float> data(k_ * ndim_);
         std::generate(data.begin(), data.end(), rand_var);
-        auto mat = Eigen::Map<Eigen::MatrixXf>(data.data(), k_, nb_dims_);
+        auto mat = Eigen::Map<Eigen::MatrixXf>(data.data(), k_, ndim_);
         for (size_t j=0; j < k_; ++j) {
             auto vec = mat.row(j);
             vec.normalize();
@@ -373,16 +373,11 @@ void LSHSpace<ID>::_InitOffsets() {
     offsets_.clear();
     offsets_.reserve(L_);
     for (size_t i=0; i < L_; ++i) {
-        std::vector<float> data(k_* nb_dims_);
+        std::vector<float> data(k_* ndim_);
         std::generate(data.begin(), data.end(), rand_var);
         auto offset = Eigen::Map<Eigen::VectorXf>(data.data(), k_);
         offsets_.emplace_back(offset);
     }
-}
-
-template <typename ID>
-size_t LSHSpace<ID>::Size() const {
-    return ids_.size();
 }
 
 template <typename ID>
@@ -393,10 +388,10 @@ inline void WriteResults(std::ostream& out, ID& id, vector<SpaceResult<ID>>& res
 }
 
 template <typename ID>
-void LSHSpace<ID>::MakeGraph(std::ostream& out, size_t nb_results) const {
+void LSHSpace<ID>::GraphToStream(std::ostream& out, size_t nb_results) const {
     // Iterate over all ids stored
     size_t total = ids_.size();
-    auto progBar = ProgBar(total);
+    auto progBar = ProgressBar(total);
     #pragma omp parallel for shared(progBar)
     for (size_t i = 0; i < total; ++i) {
         auto id = ids_[i];
@@ -409,22 +404,3 @@ void LSHSpace<ID>::MakeGraph(std::ostream& out, size_t nb_results) const {
         }
     }
 }
-
-template <typename ID>
-void LSHSpace<ID>::MakeGraph(const std::string& path, size_t nb_results) const {
-    if (path == "-") {
-        MakeGraph(std::cout, nb_results);
-    } else {
-        std::ofstream ofs;
-        ofs.open(path, std::ofstream::out | std::ofstream::trunc);
-        MakeGraph(ofs, nb_results);
-        ofs.close();
-    }
-}
-
-template <typename ID>
-void LSHSpace<ID>::Info(FILE* log, size_t indent, size_t indent_incr) const {
-    const char* zero = string(indent, ' ').c_str();
-    fprintf(log, "%sitems: %zu\n", zero, ids_.size());
-}
-

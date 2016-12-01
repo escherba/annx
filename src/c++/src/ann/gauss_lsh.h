@@ -1,5 +1,7 @@
 #pragma once
 
+#define EIGEN_USE_NEW_STDVECTOR
+
 #include <cmath>
 #include <iostream>
 #include <fstream>
@@ -102,7 +104,7 @@ class LSHSpace : public Space<ID> {
         // dynamically allocated members
         // actual data stored
         unordered_map<ID, size_t> id2index_;
-        vector<Eigen::VectorXf> points_;
+        vector<Eigen::VectorXf, Eigen::aligned_allocator<Eigen::VectorXf>> points_;
 
         // dynamically allocated members (2)
         //
@@ -290,15 +292,15 @@ void LSHSpace<ID>::GetNeighbors(const Eigen::VectorXf& evec, size_t nb_results,
 
     // first sort by the number of matching buckets
     // (this is done using flip_map)
-    std::multimap<uint32_t, ID> dst = flip_map(counter);
+    std::multimap<uint32_t, ID> tmp = flip_map(counter);
     size_t i;
     size_t search_k = (search_k_ == 0) ? L_ * nb_results : search_k_;
-    size_t num_candidates = std::min(search_k, dst.size());
-    auto cit = dst.rbegin();
+    size_t num_candidates = std::min(search_k, tmp.size());
+    auto tmp_it = tmp.rbegin();
     std::vector<SpaceResult<ID>> candidates;
     candidates.reserve(num_candidates);
     for (i = 0; i < num_candidates; ++i) {
-        ID& id = cit->second;
+        ID& id = tmp_it->second;
         auto it = id2index_.find(id);
         if (it != id2index_.end()) {
             auto idx = it->second;
@@ -307,7 +309,7 @@ void LSHSpace<ID>::GetNeighbors(const Eigen::VectorXf& evec, size_t nb_results,
             slot.dist = 1.0 - evec.dot(points_[idx]);  // calculate distance
             candidates.emplace_back(slot);
         }
-        ++cit;
+        ++tmp_it;
     }
     // next sort by distances in ascending order
     std::sort(candidates.begin(), candidates.end());

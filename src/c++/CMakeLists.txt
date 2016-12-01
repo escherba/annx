@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 2.8.7)
 
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 set(PROJECT_NAME_STR ann)
 project(${PROJECT_NAME_STR} CXX)
 
@@ -24,7 +28,7 @@ add_subdirectory(test)
 # Vector extensions
 include(CheckSSEFeatures)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++14 -pthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pthread")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lpthread")
 set(CMAKE_CXX_FLAGS_DEBUG "-g" CACHE INTERNAL "" FORCE)
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -fopenmp -msse4.1" CACHE INTERNAL "" FORCE)

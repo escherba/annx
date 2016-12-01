@@ -15,6 +15,7 @@
 #include <boost/random/normal_distribution.hpp>
 
 #include <Eigen/Dense>
+#include <Eigen/StdVector>
 
 #include "common/ann_util.h"
 #include "common/base64.h"
@@ -107,8 +108,8 @@ class LSHSpace : public Space<ID> {
         //
         // not using aligned allocator provided by Eigen
         // because it is for fixed-size types only.
-        vector<Eigen::MatrixXf> tables_;
-        vector<Eigen::VectorXf> offsets_;
+        vector<Eigen::MatrixXf, Eigen::aligned_allocator<Eigen::MatrixXf>> tables_;
+        vector<Eigen::VectorXf, Eigen::aligned_allocator<Eigen::VectorXf>> offsets_;
         vector<Bucket<ID>> buckets_;
 
         // constructor params
@@ -153,8 +154,6 @@ void LSHSpace<ID>::Clear() {
     points_.clear();
     tables_.clear();
     offsets_.clear();
-
-    std::vector<Eigen::VectorXf> points_;
 }
 
 template <typename ID>
@@ -273,7 +272,7 @@ unsigned int LSHSpace<ID>::Upsert(const SpaceInput<ID>& input) {
 }
 
 template <typename ID>
-void LSHSpace<ID>::GetNeighbors(const Eigen::VectorXf &evec, size_t nb_results,
+void LSHSpace<ID>::GetNeighbors(const Eigen::VectorXf& evec, size_t nb_results,
         vector<SpaceResult<ID>>& results) const
 {
     std::unordered_map<ID, uint32_t> counter;

@@ -122,6 +122,13 @@ void Space<ID>::GraphToPath(const std::string& path, size_t nb_results) const {
 
 /* end Space<ID> */
 
+template <typename ID>
+inline void WriteResults(std::ostream& out, const ID& id, const vector<SpaceResult<ID>>& results) {
+    for (auto& result: results) {
+        out << id << "," << result.id << "," << result.dist << std::endl;
+    }
+}
+
 template <typename Float>
 inline Float EuclideanDistance(const Float* a, const Float* b, size_t dim) {
     Float result = 0.0;

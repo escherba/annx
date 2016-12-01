@@ -159,9 +159,6 @@ void LSHSpace<ID>::Clear() {
 
 template <typename ID>
 unsigned int LSHSpace<ID>::Delete(const ID& id) {
-    if (ids_.empty()) {
-        return 0;
-    }
 
     // Look up the ID.
     auto it = id2index_.find(id);
@@ -170,18 +167,30 @@ unsigned int LSHSpace<ID>::Delete(const ID& id) {
     }
     size_t curr_idx = it->second;
     size_t last_idx = ids_.size() - 1;
+    auto& last_id = ids_[last_idx];
+    auto& curr_point = points_[curr_idx];
+
+    _IterBuckets(curr_point, [this, &id] (size_t bucket_idx, const std::string &key) {
+        auto& bucket = this->buckets_[bucket_idx];
+        auto it = bucket.find(key);
+        if (it != bucket.end()) {
+            auto& ids = it->second;
+            auto jt = ids.find(id);
+            if (jt != ids.end()) {
+                ids.erase(jt);
+            }
+        }
+    });
 
     // Swap with the end and resize by one.
-    ids_[curr_idx] = ids_[last_idx];
+    ids_[curr_idx] = last_id;
     ids_.resize(last_idx);
+    id2index_.erase(it);
+    id2index_[last_id] = curr_idx;
 
     points_[curr_idx] = points_[last_idx];
     points_.resize(last_idx);
 
-    id2index_[ids_[last_idx]] = curr_idx;
-    id2index_.erase(it);
-
-    // TODO: add code to delete LSH indices
     return 1;
 }
 

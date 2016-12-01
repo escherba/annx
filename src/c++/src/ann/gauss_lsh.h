@@ -46,7 +46,8 @@ std::multimap<B,A> flip_map(const M<A,B,Args...> &src)
     return dst;
 }
 
-typedef unordered_map<std::string, std::unordered_set<size_t>> Bucket;
+template<typename ID>
+using Bucket = unordered_map<std::string, std::unordered_set<ID>>;
 
 } /**** end namespace ****/
 
@@ -108,7 +109,7 @@ class LSHSpace : public Space<ID> {
         // because it is for fixed-size types only.
         vector<Eigen::MatrixXf> tables_;
         vector<Eigen::VectorXf> offsets_;
-        vector<Bucket> buckets_;
+        vector<Bucket<ID>> buckets_;
 
         // constructor params
         size_t L_;
@@ -218,7 +219,6 @@ float sumVec(const float* vec, size_t n) {
 
 template <typename ID>
 unsigned int LSHSpace<ID>::Upsert(const SpaceInput<ID>& input) {
-    Delete(input.id);
 
     // Reject NaN entries.
     if (!isfinite_xf(input.point, ndim_)) {
@@ -237,23 +237,26 @@ unsigned int LSHSpace<ID>::Upsert(const SpaceInput<ID>& input) {
         return 0;
     }
 
+    const ID& id = input.id;
+    Delete(id);
+
     size_t idx = ids_.size();
-    ids_.emplace_back(input.id);
-    id2index_[input.id] = idx;
+    ids_.emplace_back(id);
+    id2index_[id] = idx;
 
     evec.normalize();
     points_.emplace_back(evec);
 
     // fill buckets
-    _IterBuckets(evec, [this, idx] (size_t bucket_idx, const std::string &key) {
+    _IterBuckets(evec, [this, &id] (size_t bucket_idx, const std::string &key) {
         auto& bucket = this->buckets_[bucket_idx];
         auto it = bucket.find(key);
         if (it != bucket.end()) {
-            it->second.insert(idx);
+            it->second.insert(id);
         }
         else {
-            unordered_set<size_t> value;
-            value.insert(idx);
+            unordered_set<ID> value;
+            value.insert(id);
             bucket.insert(std::make_pair(key, value));
         }
     });
@@ -264,22 +267,22 @@ template <typename ID>
 void LSHSpace<ID>::GetNeighbors(const Eigen::VectorXf &evec, size_t nb_results,
         vector<SpaceResult<ID>>& results) const
 {
-    std::unordered_map<size_t, uint32_t> counter;
+    std::unordered_map<ID, uint32_t> counter;
 
     _IterBuckets(evec, [this, &counter] (size_t bucket_idx, const std::string &key) {
         auto& bucket = this->buckets_[bucket_idx];
         auto it = bucket.find(key);
         if (it != bucket.end()) {
-            auto& indices = it->second;
-            for (auto idx : indices) {
-                counter[idx]++;
+            auto& ids = it->second;
+            for (auto& id : ids) {
+                counter[id]++;
             }
         }
     });
 
     // first sort by the number of matching buckets
     // (this is done using flip_map)
-    std::multimap<uint32_t, size_t> dst = flip_map(counter);
+    std::multimap<uint32_t, ID> dst = flip_map(counter);
     size_t i;
     size_t search_k = (search_k_ == 0) ? L_ * nb_results : search_k_;
     size_t num_candidates = std::min(search_k, dst.size());
@@ -287,12 +290,15 @@ void LSHSpace<ID>::GetNeighbors(const Eigen::VectorXf &evec, size_t nb_results,
     std::vector<SpaceResult<ID>> candidates;
     candidates.reserve(num_candidates);
     for (i = 0; i < num_candidates; ++i) {
-        auto idx = cit->second;
-        auto& id = ids_[idx];
-        SpaceResult<ID> slot;
-        slot.id = id;
-        slot.dist = 1.0 - evec.dot(points_[idx]);  // calculate distance
-        candidates.emplace_back(slot);
+        ID& id = cit->second;
+        auto it = id2index_.find(id);
+        if (it != id2index_.end()) {
+            auto idx = it->second;
+            SpaceResult<ID> slot;
+            slot.id = id;
+            slot.dist = 1.0 - evec.dot(points_[idx]);  // calculate distance
+            candidates.emplace_back(slot);
+        }
         ++cit;
     }
     // next sort by distances in ascending order
@@ -359,7 +365,7 @@ void LSHSpace<ID>::_InitBuckets() {
     buckets_.clear();
     buckets_.reserve(L_);
     for (size_t i = 0; i < L_; ++i) {
-        Bucket bucket;
+        Bucket<ID> bucket;
         buckets_.emplace_back(bucket);
     }
 }
@@ -381,20 +387,13 @@ void LSHSpace<ID>::_InitOffsets() {
 }
 
 template <typename ID>
-inline void WriteResults(std::ostream& out, ID& id, vector<SpaceResult<ID>>& results) {
-    for (auto& result: results) {
-        out << id << "," << result.id << "," << result.dist << std::endl;
-    }
-}
-
-template <typename ID>
 void LSHSpace<ID>::GraphToStream(std::ostream& out, size_t nb_results) const {
     // Iterate over all ids stored
     size_t total = ids_.size();
     auto progBar = ProgressBar(total);
     #pragma omp parallel for shared(progBar)
     for (size_t i = 0; i < total; ++i) {
-        auto id = ids_[i];
+        const ID& id = ids_[i];
         vector<SpaceResult<ID>> results;
         GetNeighbors(id, nb_results, results);
         #pragma omp critical

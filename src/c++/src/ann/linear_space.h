@@ -91,6 +91,8 @@ unsigned int LinearSpace<ID>::Delete(const ID& id) {
     // Swap with the end and resize by one.
     auto& index = it->second;
     id2index_[ids_[ids_.size() - 1]] = index;
+    id2index_.erase(it);
+
     ids_[index] = ids_[ids_.size() - 1];
     ids_.resize(ids_.size() - 1);
 

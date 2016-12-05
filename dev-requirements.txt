@@ -6,3 +6,4 @@ ipython
 coverage
 nosexcover
 nose
+virtualenv

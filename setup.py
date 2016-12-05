@@ -15,7 +15,7 @@ from Cython.Distutils import build_ext
 from pkg_resources import resource_string
 
 NAME = 'annx'
-VERSION = '0.0.2'
+VERSION = '0.0.3'
 SRC_ROOT = 'annx'
 URL = 'https://github.com/escherba/annx'
 

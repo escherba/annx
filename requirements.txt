@@ -1,4 +1,2 @@
-virtualenv
 cython
-regex
 numpy

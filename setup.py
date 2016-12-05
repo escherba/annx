@@ -101,7 +101,6 @@ def parse_reqs(reqs):
             dep_links.append(url)
             continue
         # add packages of form:
-        # git+https://github.com/Livefyre/pymaptools#egg=pymaptools-0.0.3
         egg_info = EGG_RE.match(req)
         if egg_info is not None:
             url, _, _ = egg_info.group(0, 2, 3)

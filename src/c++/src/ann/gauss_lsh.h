@@ -23,7 +23,6 @@
 #include "common/base64.h"
 #include "ann/space.h"
 
-
 using std::multimap;
 using std::unordered_map;
 using std::unordered_set;
@@ -200,13 +199,13 @@ void LSHSpace<ID>::_IterBuckets(
         const Eigen::VectorXf &vec,
         std::function<void(size_t, const std::string&)> func) const
 {
+    auto ptr_floor = std::function<float(float)>(static_cast<float(&)(float)>(std::floor));
     for (size_t bucket_idx=0; bucket_idx < L_; ++bucket_idx) {
         auto& table = tables_[bucket_idx];
         auto& offset = offsets_[bucket_idx];
 
         auto proj_whole = ((table * vec) + offset) / w_;
-        auto proj_floor = proj_whole.unaryExpr(std::ptr_fun(::floor));
-        Eigen::VectorXi quantized = proj_floor.template cast<int>();
+        Eigen::VectorXi quantized = proj_whole.unaryExpr(ptr_floor).template cast<int>();
 
         //std::cout << quantized.transpose() << std::endl;
 

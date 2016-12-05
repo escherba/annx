@@ -15,7 +15,7 @@ from setuptools.command.build_ext import build_ext as _build_ext
 from pkg_resources import resource_string, resource_filename
 
 NAME = 'annx'
-VERSION = '0.0.3.post0'
+VERSION = '0.0.4'
 SRC_ROOT = 'annx'
 URL = 'https://github.com/escherba/annx'
 

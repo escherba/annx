@@ -1,3 +1,3 @@
-__version__ = '0.0.3.post0'
+__version__ = '0.0.4'
 
 from .ext import *

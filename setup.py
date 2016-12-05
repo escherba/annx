@@ -11,8 +11,8 @@ import distutils.sysconfig
 from glob import glob
 from setuptools import Command, setup, Extension
 from setuptools.dist import Distribution
-from Cython.Distutils import build_ext
-from pkg_resources import resource_string
+from setuptools.command.build_ext import build_ext as _build_ext
+from pkg_resources import resource_string, resource_filename
 
 NAME = 'annx'
 VERSION = '0.0.3'
@@ -36,6 +36,7 @@ class BinaryDistribution(Distribution):
         return False
 
 try:
+    from Cython.Distutils import build_ext as _build_ext
     from Cython.Build import cythonize
     has_cython = True
 except ImportError:
@@ -296,6 +297,17 @@ def define_extensions(use_cython=False):
         return cythonize(modules)
     else:
         return modules
+
+
+class build_ext(_build_ext):
+    def build_extensions(self):
+        numpy_incl = resource_filename('numpy', 'core/include')
+
+        for ext in self.extensions:
+            if hasattr(ext, 'include_dirs') and numpy_incl not in ext.include_dirs:
+                ext.include_dirs.append(numpy_incl)
+        _build_ext.build_extensions(self)
+
 
 set_compiler()
 

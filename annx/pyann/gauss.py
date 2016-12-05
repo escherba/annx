@@ -38,7 +38,7 @@ class GaussianLSH(object):
     URL: http://dx.doi.org/10.1109/JPROC.2012.2193849
 
     """
-    def __init__(self, L, k, rank, w=0.5, normalize_inputs=False,
+    def __init__(self, rank, L=15, k=32, w=0.5, normalize_inputs=False,
                  dtype=np.float32):
         """Default constructor
 

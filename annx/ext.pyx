@@ -63,7 +63,8 @@ cdef class Indexer:
     def query_point(self, np.ndarray[np.float32_t, ndim=1, mode='c'] vec not None,
                     uint32_t n_neighbors=10):
         cdef vector[SpaceResult[uint64_t]] results
-        self._indexer.GetNeighborsByPt(<const float*>vec.data, n_neighbors, results)
+        self._indexer.GetNeighborsByPt(
+            <const float*>vec.data, n_neighbors, results)
         return self._query_result(results)
 
     def make_graph(self, output, uint32_t nb_neighbors=10):
@@ -77,7 +78,8 @@ cdef class Indexer:
 
 cdef class LSHIndexer(Indexer):
 
-    def __cinit__(self, uint32_t rank, uint32_t L=15, uint32_t k=32, float w=0.5, uint32_t search_k=0, uint64_t seed=0):
+    def __cinit__(self, uint32_t rank, uint32_t L=15, uint32_t k=32,
+                  float w=0.5, uint32_t search_k=0, uint64_t seed=0):
         self._indexer = new LSHSpace[uint64_t](seed)
         (<LSHSpace[uint64_t] *>self._indexer).Config(rank, L, k, w, search_k)
         self._rank = rank

@@ -31,7 +31,7 @@ include(CheckSSEFeatures)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pthread")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lpthread")
 set(CMAKE_CXX_FLAGS_DEBUG "-g" CACHE INTERNAL "" FORCE)
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -fopenmp -msse4.1" CACHE INTERNAL "" FORCE)
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -fopenmp -march=native -ffast-math" CACHE INTERNAL "" FORCE)
 
 if (${CMAKE_CXX_COMPILER_ID} MATCHES GNU)
   # Use C++11 when using GNU compilers.

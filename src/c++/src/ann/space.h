@@ -134,10 +134,9 @@ inline Float EuclideanDistance(const Float* a, const Float* b, size_t dim) {
     Float result = 0.0;
     #pragma omp simd reduction(+:result) aligned(a:32)
     for (size_t i = 0; i < dim; ++i) {
-        Float d = a[i] - b[i];
-        result += d * d;
+        result += a[i] * b[i];
     }
-    return (Float)sqrt(result);
+    return (Float)sqrt(2.0 * std::max(0.0f, 1.0 - result));
 }
 
 template <typename Float>
@@ -147,7 +146,7 @@ inline Float CosineDistance(const Float* a, const Float* b, size_t dim) {
     for (size_t i = 0; i < dim; ++i) {
         result += a[i] * b[i];
     }
-    return (Float)(1.0 - result);
+    return (Float)std::max(0.0f, 1.0 - result);
 }
 
 template <typename Float>
